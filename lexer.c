@@ -54,7 +54,7 @@ FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer) {
         //printf("%s\n","if1");
         //for (int i = 0; i < bufferSize; i ++) printf("%c", twinBuffer  ->  buffer2[i]);
         if(bytesRead<bufferSize){
-            twinBuffer -> buffer2[bytesRead+1]='\0';
+            twinBuffer -> buffer2[bytesRead]='\0';
         }
         twinBuffer -> inUseBuffer = 2; 
         twinBuffer -> forward = 0;
@@ -67,7 +67,7 @@ FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer) {
         //printf("%s\n","if2");
         //for (int i = 0; i < bufferSize; i ++) printf("%c", twinBuffer  ->  buffer1[i]);
         if(bytesRead<bufferSize){
-            twinBuffer -> buffer1[bytesRead+1]='\0';
+            twinBuffer -> buffer1[bytesRead]='\0';
         }
         twinBuffer -> inUseBuffer = 1; 
         twinBuffer -> forward = 0;
@@ -760,20 +760,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 int main() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\Compiler\\t1(1).txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\Compiler\\t2.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
