@@ -1,7 +1,7 @@
 //#include "structures.h"
 //#include "lexer.h"
-#define bufferSize 100000000
-#define maxVarSize 20
+#define bufferSize 4
+#define maxVarSize 60
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -154,6 +154,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
     TokenInfo *tokenInfo = (TokenInfo *) malloc(sizeof(TokenInfo));
 
     while(1) {
+
+        if (twinBuffer -> forward >= bufferSize) {
+            filePointer = getStream(filePointer, twinBuffer);
+        }
         currentBuffer = twinBuffer -> buffer2;
 
         if (twinBuffer -> inUseBuffer == 1) {
@@ -165,7 +169,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 0:
                 state = fromZeroToWhere(currentCharacter);
                 // store in lexeme buffer
-                if(state != 0) {
+                if(state != 0 && currentCharacter!='%') {
                     temp[tempIndex] = currentCharacter;
                     tempIndex++;
                 }
@@ -232,7 +236,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 break;      
                 
             case 5:
-                if (currentCharacter != '\n') {
+                if (currentCharacter != '\n' && currentCharacter!='\0') {
                     state = 5;
                     twinBuffer -> forward ++;
                 } else {
@@ -303,9 +307,12 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             if(currentCharacter >= '0' && currentCharacter<='9'){
                 state=12;
             }
-            else{
+            else 
+            {
                 //error
-                return tokenInfo;
+                twinBuffer->lexBegin=twinBuffer->forward;
+                return returnToken(tokenInfo, "error",NULL,lineNumber);
+                break;
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -338,9 +345,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             else if(currentCharacter=='+' || currentCharacter=='-'){
                 state=16;
             }
-            else{
+            else {
                 //error
-                return tokenInfo;
+                twinBuffer->lexBegin=twinBuffer->forward;
+                return returnToken(tokenInfo, "error",NULL,lineNumber);
+                break;
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -352,9 +361,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             if(currentCharacter >= '0' && currentCharacter<='9'){
                 state=17;
             }
-            else{
-                //error
-                return tokenInfo;
+            else {
+                    //error
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -376,9 +387,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     break;
 
                 }
-                else{
+                else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 
                 break;
@@ -439,9 +452,15 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 24:
                 if(currentCharacter >= 'a' && currentCharacter <= 'z') {
                     state = 28;
-                temp[tempIndex] = currentCharacter;
-                twinBuffer -> forward ++;
-                tempIndex++;
+                    temp[tempIndex] = currentCharacter;
+                    twinBuffer -> forward ++;
+                    tempIndex++;
+                }else {
+                    //error
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
+                }
                 break;
 
             case 28:
@@ -561,22 +580,25 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->forward++;
                 }else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
                 
             case 44:
                 if(currentCharacter == '&'){
                     char *tk_id = "TK_AND";
-                    temp="&&&";
+                    char *tk_v="&&&";
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
                 }
-                else{
+                else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
             
@@ -586,7 +608,9 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->forward++;
                 }else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
             case 47:
@@ -598,9 +622,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     temp[tempIndex]='\0';
                     return returnToken(tokenInfo, temp, tk_id, lineNumber);
                 }
-                else{
+                else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
             
@@ -612,31 +638,39 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
                     return returnToken(tokenInfo, temp, tk_id, lineNumber);
-                }else{
+                }else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
                 
             case 51: 
                 if(currentCharacter == '='){
                     char *tk_id = "TK_NE";
-                    temp = "!=";
+                    char *tk_v = "!=";
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
-                }else{
+                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
+                }else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
                 break;
 
             case 53: 
                 if(currentCharacter == '-'){
                     state = 54;
-                }else if( currentCharacter= '='){
-                    state = 59;
+                }else if( currentCharacter=='='){
+                    char *tk_id = "TK_LE";
+                    twinBuffer->forward++;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    temp[tempIndex]='=';
+                    temp[tempIndex+1]='\0';
+                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
                 }else {
                     // Retract 1
                     //twinBuffer -> forward --;
@@ -672,7 +706,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 
             case 55: 
                 if(currentCharacter == '-') {
-                    char *tk_id = "TK_LT";
+                    char *tk_id = "TK_ASSIGNOP";
                     temp[tempIndex] = currentCharacter;
                     tempIndex++;
                     twinBuffer -> forward ++;
@@ -681,7 +715,9 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     return returnToken(tokenInfo, temp, tk_id, lineNumber);
                 } else {
                     //error
-                    return tokenInfo;
+                    twinBuffer->lexBegin=twinBuffer->forward;
+                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    break;
                 }
 
                 break;
@@ -704,11 +740,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }
                 break;
             
-            case 62:
-                if(feof(filePointer)){
-                    char *tk_id ="EOF";
-                    return returnToken(tokenInfo, "$",tk_id,lineNumber);
-                }
+            case 62:{
+                char *tk_id ="EOF";
+                return returnToken(tokenInfo, "$",tk_id,lineNumber);
+            }
                 break;
 
             case 63:
@@ -720,12 +755,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
 
         }
 
-        if (twinBuffer -> forward == bufferSize) {
-            filePointer = getStream(filePointer, twinBuffer);
-        }
+        
     }
 }
-}
+
 
 
 
@@ -740,7 +773,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
 int main() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("t1(1).txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\Compiler\\t1(1).txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");

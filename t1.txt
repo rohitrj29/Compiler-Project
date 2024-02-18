@@ -1,1 +1,2 @@
-_main  input_input parameter list[int c3, ]output[real c6];_computeFunctionValue
+recor
+en
