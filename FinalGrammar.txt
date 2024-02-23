@@ -1,0 +1,102 @@
+program otherFunctions mainFunction
+mainFunction TK_MAIN stmts TK_END
+otherFunctions function otherFunctions
+otherFunctions eps
+function TK_FUNID input_par output_par TK_SEM stmts TK_END
+input_par TK_INPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
+output_par TK_OUTPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
+output_par eps
+parameter_list fieldType TK_ID remaining_list
+fieldType primitiveDataType
+fieldType constructedfieldType
+primitiveDataType TK_INT
+primitiveDataType TK_REAL
+constructedfieldType TK_RECORD TK_RUID
+constructedfieldType TK_UNION TK_RUID
+constructedfieldType TK_RUID
+remaining_list TK_COMMA parameter_list
+remaining_list eps
+stmts typeDefinitions declarations otherStmts returnStmt
+typeDefinitions actualOrRedefined typeDefinitions
+typeDefinitions eps
+actualOrRedefined typeDefinition
+actualOrRedefined definetypestmt
+typeDefinition TK_RECORD TK_RUID fieldDefinitions TK_ENDRECORD
+typeDefinition TK_UNION TK_RUID fieldDefinitions TK_ENDUNION
+fieldDefinitions fieldDefinition fieldDefinition moreFields
+fieldDefinition TK_TYPE fieldType TK_COLON TK_FIELDID TK_SEM
+fieldType primitiveDataType
+fieldType constructedDatatype
+moreFields fieldDefinition moreFields
+moreFields eps
+declarations declaration declarations
+declarations eps
+declaration TK_TYPE dataType TK_COLON TK_ID global_or_not TK_SEM
+global_or_not TK_COLON TK_GLOBAL
+global_or_not eps
+otherStmts stmt otherStmts
+otherStmts eps
+stmt assignmentStmt
+stmt iterativeStmt
+stmt conditionalStmt
+stmt ioStmt
+stmt funCallStmt
+assignmentStmt singleOrRecId TK_ASSIGNOP arithmeticExpression TK_SEM
+singleOrRecId TK_ID fieldOrNot
+fieldOrNot expansion expansions
+fieldOrNot eps
+expansion TK_DOT TK_FIELDID
+expansions expansion expansions
+expansions eps
+funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS
+inputParameters TK_SEM
+outputParameters TK_SQL idList TK_SQR TK_ASSIGNOP
+outputParameters eps
+inputParameters TK_SQL idList TK_SQR
+iterativeStmt TK_WHILE TK_OP booleanExpression TK_CL stmt otherStmts TK_ENDWHILE
+conditionalStmt TK_IF TK_OP booleanExpression TK_CL TK_THEN stmt otherStmts elseBlock
+elseBlock TK_ELSE stmt otherStmts TK_ENDIF
+elseBlock TK_ENDIF
+ioStmt TK_READ TK_OP var TK_CL TK_SEM
+ioStmt TK_WRITE TK_OP var TK_CL TK_SEM
+arithmeticExpression unit addSubRem
+addSubRem addSub unit addSubRem
+addSubRem eps
+unit nestedExp mulDivRem
+nestedExp TK_OP arithmeticExpression TK_CL
+nestedExp varAndRecord 
+mulDivRem mulDiv nestedExp mulDivRem
+mulDivRem eps
+varAndRecord TK_ID
+varAndRecord TK_NUM
+varAndRecord TK_RNUM
+varAndRecord TK_RUID recordField
+recordField TK_DOT TK_FIELDID
+recordField eps
+mulDiv TK_MUL
+mulDiv TK_DIV
+addSub TK_PLUS
+addSub TK_MINUS
+booleanExpression TK_OP booleanExpression TK_CL logicalOp TK_OP booleanExpression TK_CL
+booleanExpression var relationalOp var
+booleanExpression TK_NOT TK_OP booleanExpression TK_CL
+var singleOrRecId
+var TK_NUM
+var TK_RNUM
+logicalOp TK_AND
+logicalOp TK_OR
+relationalOp TK_LT
+relationalOp TK_LE
+relationalOp TK_EQ
+relationalOp TK_GT
+relationalOp TK_GE
+relationalOp TK_NE
+returnStmt TK_RETURN optionalReturn TK_SEM
+optionalReturn TK_SQL idList TK_SQR
+optionalReturn eps
+idList TK_ID more_ids
+more_ids TK_COMMA idList
+more_ids eps
+definetypestmt TK_DEFINETYPE A TK_RUID TK_AS TK_RUID
+A TK_RECORD
+A TK_UNION
