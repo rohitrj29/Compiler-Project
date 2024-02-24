@@ -64,7 +64,7 @@ void populateFirstFromAnother(int ffIndex1, int ffIndex2) {
         char element[MAXTERM];
         strcpy(element, firstFollow[ffIndex2].firstSet[i]);
         
-        if (present(element, firstFollow[ffIndex1].firstSet, initialElementsInFirst)) continue;
+        if (present(element, firstFollow[ffIndex1].firstSet, initialElementsInFirst) || strcmp(element, "eps") == 0) continue;
         else {
             strcpy(firstFollow[ffIndex1].firstSet[initialElementsInFirst ++], element);
             firstFollow[ffIndex1].noOfFirst ++;
@@ -212,7 +212,7 @@ void findFirst(int ffind, int grammarInd) {
             //copy all first elements to the current non terminal
 
             //if the element is a terminal
-            if(grammarRule[i].rightElements[k][0]>='A' && grammarRule[i].rightElements[k][0]<='Z'  || strcmp(grammarRule[i].rightElements[k], "eps") == 0){
+            if((grammarRule[i].rightElements[k][0]>='A' && grammarRule[i].rightElements[k][0]<='Z' ) || strcmp(grammarRule[i].rightElements[k], "eps") == 0){
                 populateFirstFromSingleElement(ffind, grammarRule[i].rightElements[k]);
                 break;
             }
@@ -262,6 +262,9 @@ void findFirst(int ffind, int grammarInd) {
 
 void populateFirst(){
     for(int i=0;i<noOfNonTerminals;i++){
+        if(firstFollow[i].visited==true){
+            continue;
+        }
         firstFollow[i].noOfFirst=0;
         findFirst(i, NTLookup[i].grammarIndex);
     }
@@ -270,7 +273,7 @@ void populateFirst(){
 void findFollow(int ffIndex){
     for(int i=0;i<lineNumber;i++){
         int found=0;
-        int noteps=0; //unused variable
+        
         for(int j=0;j<grammarRule[i].noOfElements;j++){
             if(strcmp(grammarRule[i].rightElements[j],firstFollow[ffIndex].nonTerminal)==0){
                 found=1;
@@ -417,7 +420,7 @@ int main()
     }
 
     intialiseFFandLookup();
-    //populateFirst();
+    populateFirst();
     // populateFollow();
 
     for (int i = 0; i < noOfNonTerminals; i++)
