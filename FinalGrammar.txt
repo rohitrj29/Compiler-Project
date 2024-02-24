@@ -50,9 +50,9 @@ expansions expansion expansions
 expansions eps
 funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS
 inputParameters TK_SEM
+inputParameters TK_SQL idList TK_SQR
 outputParameters TK_SQL idList TK_SQR TK_ASSIGNOP
 outputParameters eps
-inputParameters TK_SQL idList TK_SQR
 iterativeStmt TK_WHILE TK_OP booleanExpression TK_CL stmt otherStmts TK_ENDWHILE
 conditionalStmt TK_IF TK_OP booleanExpression TK_CL TK_THEN stmt otherStmts elseBlock
 elseBlock TK_ELSE stmt otherStmts TK_ENDIF

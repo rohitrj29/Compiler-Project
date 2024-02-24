@@ -39,6 +39,7 @@ typedef struct
     bool isEpsilon;
     bool visited;
     bool followCalc;
+    bool lock;
 } FirstFollow;
 
 // Arrays to store data
@@ -184,17 +185,6 @@ NTLookupEntry getNTLookup(char *nonTerminal)
 }
 
 
-// find if element's isepsilon is true in NTLookup
-// NTLookupEntry* searchInLookup(char element[]){
-//     int i=0;
-//     while(NTLookup[i].nonTerminal!=NULL){
-//         if(strcmp(NTLookup[i].nonTerminal,element)==0){
-//             return NTLookup[i];
-//         }
-//         i++;
-//     }
-//     return NULL;
-// }
 
 
 void findFirst(int ffind, int grammarInd) {
@@ -284,10 +274,16 @@ void findFollow(int ffIndex){
                 if(strcmp(grammarRule[i].rightElements[j],firstFollow[ffIndex].nonTerminal)==0 && j==grammarRule[i].noOfElements-1){
                     
                     NTLookupEntry check= getNTLookup(grammarRule[i].leftElement);
+                    if(firstFollow[check.ffIndex].lock==true){
+                        found=0;
+                        continue;
+                    }
                     if(strcmp(grammarRule[i].leftElement,grammarRule[i].rightElements[grammarRule[i].noOfElements-1])==0){
                         break;
                     }
+                    firstFollow[ffIndex].lock=true;
                     findFollow(check.ffIndex);
+                    firstFollow[ffIndex].lock=false;
                     //populate follow set with follow set of left element
                     populateFollowFromFollow(ffIndex, check.ffIndex);
                     found=0;
@@ -304,6 +300,10 @@ void findFollow(int ffIndex){
                     }
                     else{
                         NTLookupEntry check= getNTLookup(grammarRule[i].rightElements[j+1]);
+                        if(firstFollow[check.ffIndex].lock==true){
+                            found=0;
+                            continue;
+                        }
                             if(firstFollow[check.ffIndex].isEpsilon){
 
                                 if(firstFollow[check.ffIndex].followCalc==true){
@@ -321,7 +321,9 @@ void findFollow(int ffIndex){
                                         //populate follow set with the first of last element i.e. j+1 current
                                         populateFollowFromFirst(ffIndex, check.ffIndex);
                                         NTLookupEntry check= getNTLookup(grammarRule[i].leftElement);
+                                        firstFollow[ffIndex].lock=true;
                                         findFollow(check.ffIndex);
+                                        firstFollow[ffIndex].lock=false;
                                         //populate follow set with follow set of left element
                                         populateFollowFromFollow(ffIndex, check.ffIndex);
                                         found=0;
@@ -331,7 +333,9 @@ void findFollow(int ffIndex){
                                     
                                          //populate the follow set with the first of rightElement[j+1] -eps we are currently at
                                         populateFollowFromFirst(ffIndex, check.ffIndex);
+                                        firstFollow[ffIndex].lock=true;
                                         findFollow(check.ffIndex);
+                                        firstFollow[ffIndex].lock=false;
                                      
                                     
                                     }
@@ -351,6 +355,7 @@ void findFollow(int ffIndex){
         }
     }
     firstFollow[ffIndex].followCalc=true;
+    return;
 }
 
 void populateFollow(){
@@ -366,7 +371,7 @@ void populateFollow(){
 int main()
 {
     FILE *fp;
-    fp = fopen("./newGrammar.txt", "r");
+    fp = fopen("./FinalGrammar.txt", "r");
 
     if (fp == NULL)
     {
@@ -409,24 +414,24 @@ int main()
     fclose(fp);
 
     // print the grammar rules
-    for (int i = 0; i < lineNumber; i++)
-    {
-        printf("%s ->   ", grammarRule[i].leftElement);
-        for (int j = 0; j < grammarRule[i].noOfElements; j++)
-        {
-            printf("%s ", grammarRule[i].rightElements[j]);
-        }
-        printf("\n");
-    }
+    // for (int i = 0; i < lineNumber; i++)
+    // {
+    //     printf("%s ->   ", grammarRule[i].leftElement);
+    //     for (int j = 0; j < grammarRule[i].noOfElements; j++)
+    //     {
+    //         printf("%s ", grammarRule[i].rightElements[j]);
+    //     }
+    //     printf("\n");
+    // }
 
     intialiseFFandLookup();
     populateFirst();
-    // populateFollow();
+    populateFollow();
 
-    for (int i = 0; i < noOfNonTerminals; i++)
-    {
-        printf("%s %d %d %d\n", NTLookup[i].nonTerminal, NTLookup[i].ffIndex, NTLookup[i].grammarIndex,firstFollow[i].isEpsilon);
-    }
+    // for (int i = 0; i < noOfNonTerminals; i++)
+    // {
+    //     printf("%s %d %d %d\n", NTLookup[i].nonTerminal, NTLookup[i].ffIndex, NTLookup[i].grammarIndex,firstFollow[i].isEpsilon);
+    // }
 
     for(int i=0;i<noOfNonTerminals;i++){
         printf("First set of %s \n ",firstFollow[i].nonTerminal);
@@ -435,7 +440,7 @@ int main()
         }
         printf("\n");
         printf("Follow set of %s \n ",firstFollow[i].nonTerminal);
-        for(int j=0;j<firstFollow[i].noOfFirst;j++){
+        for(int j=0;j<firstFollow[i].noOfFollow;j++){
             printf("%s ",firstFollow[i].followSet[j]);
         }
         printf("\n");
