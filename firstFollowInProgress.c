@@ -38,6 +38,7 @@ typedef struct
     int noOfFollow;
     bool isEpsilon;
     bool visited;
+    bool followCalc;
 } FirstFollow;
 
 // Arrays to store data
@@ -48,9 +49,85 @@ FirstFollow firstFollow[MAXNONTERM];
 int ffsize = 0;
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
+bool present(char *element, char **array, int noOfEleInArray) {
+    for (int i = 0; i < noOfEleInArray; i++) {
+        if(strcmp(element, array[i]) == 0) return true;
+    }
+
+    return false;
+}
+
+void populateFirstFromAnother(int ffIndex1, int ffIndex2) {
+    int initialElementsInFirst = firstFollow[ffIndex1].noOfFirst, intialElementsInFF2 = firstFollow[ffIndex2].noOfFirst;
+    
+    for (int i = 0; i < intialElementsInFF2; i++) {
+        char element[MAXTERM];
+        strcpy(element, firstFollow[ffIndex2].firstSet[i]);
+        
+        if (present(element, firstFollow[ffIndex1].firstSet, initialElementsInFirst)) continue;
+        else {
+            strcpy(element, firstFollow[ffIndex1].firstSet[initialElementsInFirst ++]);
+            firstFollow[ffIndex1].noOfFirst ++;
+        }
+    }
+}
+
+void populateFirstFromSingleElement(int ffIndex, char *element) {
+    int initialElementsInFirst = firstFollow[ffIndex].noOfFirst;
+    char element[MAXTERM];
+    strcpy(element, array[i]);
+    
+    if (present(element, firstFollow[ffIndex].firstSet, initialElementsInFirst)) return;
+    else {
+        strcpy(element, firstFollow[ffIndex].firstSet[initialElementsInFirst]);
+        firstFollow[ffIndex].noOfFirst ++;
+    }
+}
+
+void populateFollowFromFirst(int ffIndex1, int ffIndex2) {
+    int initialElementsInFollow = firstFollow[ffIndex1].noOfFollow, intialElementsInFirst = firstFollow[ffIndex2].noOfFirst;
+    
+    for (int i = 0; i < intialElementsInFirst; i++) {
+        char element[MAXTERM];
+        strcpy(element, firstFollow[ffIndex2].firstSet[i]);
+        
+        if (present(element, firstFollow[ffIndex1].followSet, initialElementsInFollow) || strcmp(element, "eps") == 0) continue;
+        else {
+            strcpy(element, firstFollow[ffIndex1].followSet[initialElementsInFollow ++]);
+            firstFollow[ffIndex1].noOfFollow ++;
+        }
+    }
+}
+
+void populateFollowFromFollow(int ffIndex1, int ffIndex2) {
+    int initialElementsInFollow1 = firstFollow[ffIndex1].noOfFollow, intialElementsInFollow2 = firstFollow[ffIndex2].noOfFollow;
+    
+    for (int i = 0; i < intialElementsInFollow2; i++) {
+        char element[MAXTERM];
+        strcpy(element, firstFollow[ffIndex2].followSet[i]);
+        
+        if (present(element, firstFollow[ffIndex1].followSet, initialElementsInFollow1) || strcmp(element, "eps") == 0) continue;
+        else {
+            strcpy(element, firstFollow[ffIndex1].followSet[initialElementsInFollow1 ++]);
+            firstFollow[ffIndex1].noOfFollow ++;
+        }
+    }
+}
+
+void populateFollowFromElement(int ffIndex, char *_element) {
+    int initialElementsInFollow = firstFollow[ffIndex].noOfFollow;
+    char element[MAXTERM];
+    strcpy(element, _element);
+    
+    if (present(element, firstFollow[ffIndex].followSet, initialElementsInFollow) || strcmp(element, "eps") == 0) return;
+    else {
+        strcpy(element, firstFollow[ffIndex].followSet[initialElementsInFollow]);
+        firstFollow[ffIndex].noOfFollow ++;
+    }
+}
+
 // Function to initialize first and follow sets and NT lookup
-void intialiseFFandLookup()
-{
+void intialiseFFandLookup() {
     int entry = 0;
     char prev[MAXTERM] = "";
 
@@ -76,6 +153,7 @@ void intialiseFFandLookup()
         }
 
         firstFollow[entry - 1].visited = false;
+        firstFollow[entry - 1].followCalc = false;
         // Check if the first element of the production rule is epsilon
         if (strcmp(grammarRule[i].rightElements[0], "eps") == 0)
             firstFollow[entry - 1].isEpsilon = true;
@@ -123,7 +201,7 @@ void findFirst(int ffind, int grammarInd){
 
 for(int i=grammarInd; i<102;i++){
     if(strcmp(grammarRule[i].leftElement,NTLookup[ffind].nonTerminal)!=0){
-        break;
+       break;
     }
     int j=grammarRule[i].noOfElements;
      for(int k=0;k<j;k++)
@@ -134,7 +212,8 @@ for(int i=grammarInd; i<102;i++){
 
         //if the element is a terminal
         if(grammarRule[i].rightElements[k][0]>='A' && grammarRule[i].rightElements[k][0]<='Z'  || strcmp(grammarRule[i].rightElements[k], "eps") == 0){
-            strcpy(firstFollow[ffind].firstSet[firstFollow[ffind].noOfFirst++],grammarRule[i].rightElements[k]);
+            //strcpy(firstFollow[ffind].firstSet[firstFollow[ffind].noOfFirst++],grammarRule[i].rightElements[k]);
+            
             break;
         }
         else{
@@ -174,13 +253,93 @@ for(int i=grammarInd; i<102;i++){
 
     firstFollow[ffind].visited=true;
     return;
-
 }
 
 void populateFirst(){
     for(int i=0;i<ffsize;i++){
         firstFollow[i].noOfFirst=0;
         findFirst(i,NTLookup[i].grammarIndex);
+    }
+}
+
+void findFollow(int ffIndex){
+    for(int i=0;i<lineNumber;i++){
+        int found=0;
+        int noteps=0;
+        for(int j=0;j<grammarRule[i].noOfElements;j++){
+            if(strcmp(grammarRule[i].rightElements[j],firstFollow[ffIndex].nonTerminal)==0){
+                found=1;
+            }
+            if(found==1){
+                
+                //last element 
+                if(strcmp(grammarRule[i].rightElements[j],firstFollow[ffIndex].nonTerminal)==0 && j==grammarRule[i].noOfElements-1){
+                    
+                    NTLookupEntry check= getNTLookup(grammarRule[i].leftElement);
+                    findFollow(check.ffIndex);
+                    //populate follow set with follow set of left element
+                    found=0;
+                    
+
+                }
+                // not the last element
+                else{
+                    if(grammarRule[i].rightElements[j+1][0]>='A' && grammarRule[i].rightElements[j+1][0]<='Z'){
+                        //populate follow set with rightElement[j+1] as it is a terminal
+                        found=0;
+                        break;
+                    }
+                    else{
+                        NTLookupEntry check= getNTLookup(grammarRule[i].rightElements[j+1]);
+                            if(firstFollow[check.ffIndex].isEpsilon){
+
+                                if(firstFollow[check.ffIndex].followCalc==true){
+                                    //popoulate follow set with first set of right element
+                                    //populate follow set with follow set of right element
+                                    found=0;
+                                }
+                                else
+                                {
+                                
+                                    if(j+1==grammarRule[i].noOfElements-1){
+                                    
+                                        //populate follow set with the first of last element i.e. j+1 current
+                                        NTLookupEntry check= getNTLookup(grammarRule[i].leftElement);
+                                        findFollow(check.ffIndex);
+                                        //populate follow set with follow set of left element
+                                        found=0;
+                                    
+                                    }
+                                    else{
+                                    
+                                         //populate the follow set with the first of rightElement[j+1] -eps we are currently at
+                                        findFollow(check.ffIndex);
+                                     
+                                    
+                                    }
+                                }
+                                
+                            }
+                            else{
+                                //populate follow set with first set of check.nonTerminal
+                                found=0;
+                            }
+                        
+                    }
+                        
+                }
+            }
+        }
+    }
+    firstFollow[ffIndex].followCalc=true;
+}
+
+void populateFo(){
+    firstFollow[0].noOfFollow=1;
+    strcpy(firstFollow[0].followSet[0],"$");
+    for(int i=1;i<ffsize;i++){
+        firstFollow[i].noOfFollow=0;
+        findFollow(i);
     }
 }
 

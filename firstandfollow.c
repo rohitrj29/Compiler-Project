@@ -49,6 +49,8 @@ NTLookupEntry NTLookup[MAXNONTERM];
 GrammarRule grammarRule[120]  ;
 FirstFollow firstFollow[MAXNONTERM];
 
+
+
 void intialiseFFandLookup(){
     int entry = 0;
     char prev[MAXTERM]="";
@@ -154,6 +156,10 @@ void findFirst(int ffind, int grammarInd){
 
 //handle A -> aA (follow(A) = follow(A))
 //
+
+void findFollow(int ffid) {
+
+}
 
 
 

@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/91620/Desktop/Compiler",
-      "program": "c:/Users/91620/Desktop/Compiler/build/Debug/outDebug",
+      "cwd": "c:/Users/91620/Desktop/CoCo/Compiler-Project",
+      "program": "c:/Users/91620/Desktop/CoCo/Compiler-Project/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
