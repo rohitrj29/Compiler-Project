@@ -8,6 +8,8 @@
 #define MAXTERM 50
 #define MAXNONTERM 150
 #define MAXRULES 120
+#define TOTALRULES 102
+#define PARSECOL 57
 
 int lineNumber = 0;
 
@@ -46,8 +48,9 @@ typedef struct
 GrammarRule grammarRule[MAXRULES];
 NTLookupEntry NTLookup[MAXNONTERM];
 FirstFollow firstFollow[MAXNONTERM];
-
-int ffsize = 0;
+char terminals[PARSECOL][MAXTERM];
+// char *terminals[54] = {"$", "TK_ASSIGNOP", "TK_COMMENT", "TK_FIELDID", "TK_ID", "TK_NUM", "TK_RNUM", "TK_FUNID", "TK_RECORDID", "TK_WITH", "TK_PARAMETERS", "TK_END", "TK_WHILE", "TK_TYPE", "TK_MAIN", "TK_GLOBAL", "TK_PARAMETER", "TK_LIST", "TK_SQL", "TK_SQR", "TK_INPUT", "TK_OUTPUT", "TK_INT", "TK_REAL", "TK_COMMA", "TK_SEM", "TK_COLON", "TK_DOT", "TK_ENDWHILE", "TK_OP", "TK_CL", "TK_IF", "TK_THEN", "TK_ENDIF", "TK_READ", "TK_WRITE", "TK_RETURN", "TK_PLUS", "TK_MINUS", "TK_MUL", "TK_DIV", "TK_CALL", "TK_RECORD", "TK_ENDRECORD", "TK_ELSE", "TK_AND", "TK_OR", "TK_NOT", "TK_LT", "TK_LE", "TK_EQ", "TK_GT", "TK_GE", "TK_NE"};
+// int ffsize = 0;
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray) {
@@ -56,6 +59,19 @@ bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInAr
     }
     
     return false;
+}
+
+void populateTerminals(){
+    int index=1;
+    strcpy(terminals[0],"$");
+    for(int i=0;i<TOTALRULES;i++){
+        for(int j=0;j<grammarRule[i].noOfElements;j++){
+            if((grammarRule[i].rightElements[j][0]=='T' ) && present(grammarRule[i].rightElements[j],terminals,58)==false){
+                strcpy(terminals[index],grammarRule[i].rightElements[j]);
+                index++;
+            }
+        }
+    }
 }
 
 void populateFirstFromAnother(int ffIndex1, int ffIndex2) {
@@ -202,7 +218,7 @@ void findFirst(int ffind, int grammarInd) {
             //copy all first elements to the current non terminal
 
             //if the element is a terminal
-            if((grammarRule[i].rightElements[k][0]>='A' && grammarRule[i].rightElements[k][0]<='Z' ) || strcmp(grammarRule[i].rightElements[k], "eps") == 0){
+            if((grammarRule[i].rightElements[k][0]=='T') || strcmp(grammarRule[i].rightElements[k], "eps") == 0){
                 populateFirstFromSingleElement(ffind, grammarRule[i].rightElements[k]);
                 break;
             }
@@ -292,7 +308,7 @@ void findFollow(int ffIndex){
                 }
                 // not the last element
                 else{
-                    if(grammarRule[i].rightElements[j+1][0]>='A' && grammarRule[i].rightElements[j+1][0]<='Z'){
+                    if(grammarRule[i].rightElements[j+1][0]=='T'){
                         //populate follow set with rightElement[j+1] as it is a terminal
                         populateFollowFromElement(ffIndex, grammarRule[i].rightElements[j+1]);
                         found=0;
@@ -367,6 +383,113 @@ void populateFollow(){
     }
 }
 
+/*
+parser table population
+using first and follow set of non terminals
+*/
+
+
+//fill terminals from finalGrammar.txt
+
+//TODO: automate terminals population
+
+//pass a terminal and get its index
+int getTerminalIndex(char *terminal)
+{
+    for(int i = 0; i < PARSECOL; i++)
+    {
+        if(strcmp(terminals[i], terminal) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool isTerminal(char *element)
+{
+    if((element[0] >= 'A' && element[0] <= 'Z')|| element[0] == '$')
+    {
+        return true;
+    }
+    return false;
+}
+
+// int ffsize = sizeof(firstFollow) / sizeof(FirstFollow);
+int parseTable[55][PARSECOL];
+
+// bool hasepsilon(int ntindex)
+// {
+//     for(int i = 0; i < firstFollow[ntindex].noOfFirst; i++)
+//     {
+//         if(strcmp(firstFollow[ntindex].firstSet[i], "eps") == 0)
+//         {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+void createParseTable()
+{   
+    memset(parseTable, -1, sizeof(parseTable));
+    //TODO: Implement sync
+
+    for(int gindex = 0; gindex<102; gindex++)
+    {
+        NTLookupEntry entry = getNTLookup(grammarRule[gindex].leftElement);
+        int ntindex = entry.ffIndex;
+        FirstFollow ff = firstFollow[ntindex];
+        GrammarRule rule = grammarRule[gindex];
+
+        //only right[0] needs to be checked
+        // for(int rhsIndex = 0; rhsIndex < rule.noOfElements; rhsIndex++)
+        // {
+            char element[MAXTERM];
+            strcpy(element, rule.rightElements[0]);
+            if(strcmp(element, "eps") == 0)
+            {
+                for(int findex = 0; findex < ff.noOfFollow; findex++)
+                {
+                    char followElement[MAXTERM];
+                    strcpy(followElement, ff.followSet[findex]);
+                    int followIndex = getTerminalIndex(followElement);
+                    parseTable[ntindex][followIndex] = gindex;
+                }
+                // TODO: $ case
+                
+            }
+            else if(isTerminal(element))
+            {
+                int terminalIndex = getTerminalIndex(element);
+                parseTable[ntindex][terminalIndex] = gindex;
+            }
+            else
+            {
+                // variable is non-terminal
+                int nonTerminalIndex = getNTLookup(element).ffIndex;
+                for(int findex = 0; findex < firstFollow[nonTerminalIndex].noOfFirst; findex++)
+                {
+                    char firstElement[MAXTERM];
+                    strcpy(firstElement, firstFollow[nonTerminalIndex].firstSet[findex]);
+                    int firstIndex = getTerminalIndex(firstElement);
+                    parseTable[ntindex][firstIndex] = gindex;
+                }
+
+
+            }
+
+    }
+}
+
+
+/*
+end of parser table population
+*/
+
+
+
+
 
 int main()
 {
@@ -425,9 +548,17 @@ int main()
     // }
 
     intialiseFFandLookup();
+    
+    populateTerminals();
     populateFirst();
     populateFollow();
+    createParseTable();
 
+    printf("No of non terminals %d\n",noOfNonTerminals);
+    //print terminals
+    for(int i=0;i<PARSECOL;i++){
+        printf(" %d %s \n",i,terminals[i]);
+    }
     // for (int i = 0; i < noOfNonTerminals; i++)
     // {
     //     printf("%s %d %d %d\n", NTLookup[i].nonTerminal, NTLookup[i].ffIndex, NTLookup[i].grammarIndex,firstFollow[i].isEpsilon);
@@ -445,6 +576,16 @@ int main()
         }
         printf("\n");
 
+    }
+
+    for(int i=0;i<noOfNonTerminals;i++){
+        printf("%s \n",firstFollow[i].nonTerminal);
+        for(int j=0;j<PARSECOL;j++){
+            if(parseTable[i][j]!=-1){
+                printf("%d %s   ",parseTable[i][j],terminals[j]);
+            }
+        }
+        printf("\n");
     }
 
     return 0;

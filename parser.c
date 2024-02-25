@@ -5,10 +5,10 @@
 
 
 //fill terminals from finalGrammar.txt
-char *terminals[53] = {"eps", "TK_ASSIGNOP", "TK_COMMENT", "TK_FIELDID", "TK_ID", "TK_NUM", "TK_RNUM", "TK_FUNID", "TK_RECORDID", "TK_WITH", "TK_PARAMETERS", "TK_END", "TK_WHILE", "TK_TYPE", "TK_MAIN", "TK_GLOBAL", "TK_PARAMETER", "TK_LIST", "TK_SQL", "TK_SQR", "TK_INPUT", "TK_OUTPUT", "TK_INT", "TK_REAL", "TK_COMMA", "TK_SEM", "TK_COLON", "TK_DOT", "TK_ENDWHILE", "TK_OP", "TK_CL", "TK_IF", "TK_THEN", "TK_ENDIF", "TK_READ", "TK_WRITE", "TK_RETURN", "TK_PLUS", "TK_MINUS", "TK_MUL", "TK_DIV", "TK_CALL", "TK_RECORD", "TK_ENDRECORD", "TK_ELSE", "TK_AND", "TK_OR", "TK_NOT", "TK_LT", "TK_LE", "TK_EQ", "TK_GT", "TK_GE", "TK_NE"};
+char *terminals[53] = {"$", "TK_ASSIGNOP", "TK_COMMENT", "TK_FIELDID", "TK_ID", "TK_NUM", "TK_RNUM", "TK_FUNID", "TK_RECORDID", "TK_WITH", "TK_PARAMETERS", "TK_END", "TK_WHILE", "TK_TYPE", "TK_MAIN", "TK_GLOBAL", "TK_PARAMETER", "TK_LIST", "TK_SQL", "TK_SQR", "TK_INPUT", "TK_OUTPUT", "TK_INT", "TK_REAL", "TK_COMMA", "TK_SEM", "TK_COLON", "TK_DOT", "TK_ENDWHILE", "TK_OP", "TK_CL", "TK_IF", "TK_THEN", "TK_ENDIF", "TK_READ", "TK_WRITE", "TK_RETURN", "TK_PLUS", "TK_MINUS", "TK_MUL", "TK_DIV", "TK_CALL", "TK_RECORD", "TK_ENDRECORD", "TK_ELSE", "TK_AND", "TK_OR", "TK_NOT", "TK_LT", "TK_LE", "TK_EQ", "TK_GT", "TK_GE", "TK_NE"};
 //TODO: automate terminals population
 
-
+//pass a terminal and get its index
 int getTerminalIndex(char *terminal)
 {
     for(int i = 0; i < 53; i++)
@@ -23,7 +23,7 @@ int getTerminalIndex(char *terminal)
 
 bool isTerminal(char *element)
 {
-    if(element[0] >= 'A' && element[0] <= 'Z')
+    if((element[0] >= 'A' && element[0] <= 'Z')|| element[0] == '$')
     {
         return true;
     }
@@ -52,15 +52,16 @@ void createParseTable()
 
     for(int gindex = 0; gindex<102; gindex++)
     {
-        NTLookupEntry entry = NTLookup[gindex];
+        NTLookupEntry entry = getNTLookup(grammarRule[gindex].leftElement);
         int ntindex = entry.ffIndex;
         FirstFollow ff = firstFollow[ntindex];
         GrammarRule rule = grammarRule[gindex];
 
-        for(int rhsIndex = 0; rhsIndex < rule.noOfElements; rhsIndex++)
-        {
+        //only right[0] needs to be checked
+        // for(int rhsIndex = 0; rhsIndex < rule.noOfElements; rhsIndex++)
+        // {
             char element[MAXTERM];
-            strcpy(element, rule.rightElements[rhsIndex]);
+            strcpy(element, rule.rightElements[0]);
             if(strcmp(element, "eps") == 0)
             {
                 for(int findex = 0; findex < ff.noOfFollow; findex++)
@@ -90,21 +91,21 @@ void createParseTable()
                     parseTable[ntindex][firstIndex] = gindex;
                 }
 
-                if(hasepsilon(nonTerminalIndex))
-                {
-                    for(int findex = 0; findex < ff.noOfFollow; findex++)
-                    {
-                        char followElement[MAXTERM];
-                        strcpy(followElement, ff.followSet[findex]);
-                        int followIndex = getTerminalIndex(followElement);
-                        parseTable[ntindex][followIndex] = gindex;
-                    }
+                // if(hasepsilon(nonTerminalIndex))
+                // {
+                //     for(int findex = 0; findex < ff.noOfFollow; findex++)
+                //     {
+                //         char followElement[MAXTERM];
+                //         strcpy(followElement, ff.followSet[findex]);
+                //         int followIndex = getTerminalIndex(followElement);
+                //         parseTable[ntindex][followIndex] = gindex;
+                //     }
 
-                    // todo : handle dollar in follow case
-                }
+                //     // todo : handle dollar in follow case
+                // }
 
             }
-        }
+        // }
 
     }
 }

@@ -6,14 +6,14 @@ function TK_FUNID input_par output_par TK_SEM stmts TK_END
 input_par TK_INPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
 output_par TK_OUTPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
 output_par eps
-parameter_list fieldType TK_ID remaining_list
-fieldType primitiveDataType
-fieldType constructedfieldType
+parameter_list dataType TK_ID remaining_list
+dataType primitiveDataType
+dataType constructedDataType
 primitiveDataType TK_INT
 primitiveDataType TK_REAL
-constructedfieldType TK_RECORD TK_RUID
-constructedfieldType TK_UNION TK_RUID
-constructedfieldType TK_RUID
+constructedDataType TK_RECORD TK_RUID
+constructedDataType TK_UNION TK_RUID
+constructedDataType TK_RUID
 remaining_list TK_COMMA parameter_list
 remaining_list eps
 stmts typeDefinitions declarations otherStmts returnStmt
