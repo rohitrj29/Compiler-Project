@@ -456,7 +456,6 @@ void createParseTable()
                     int followIndex = getTerminalIndex(followElement);
                     parseTable[ntindex][followIndex] = gindex;
                 }
-                // TODO: $ case
                 
             }
             else if(isTerminal(element))
@@ -482,14 +481,86 @@ void createParseTable()
     }
 }
 
+void fillSyncInParseTable()
+{
+    for(int i = 0; i < noOfNonTerminals; i++)
+    {
+        
+            
+        for(int k = 0; k < firstFollow[i].noOfFollow; k++)
+        {
+            int followIndex = getTerminalIndex(firstFollow[i].followSet[k]);
+            if(parseTable[i][followIndex] == -1)
+                parseTable[i][followIndex] = -2;
+        }
+            
+        
+    }
+}
+
 
 /*
 end of parser table population
 */
 
+void printTerminals(){
+    //print terminals
+    for(int i=0;i<PARSECOL;i++){
+        printf(" %d %s \n",i,terminals[i]);
+    }
+}
 
+void printFirstFollow(){
+    for(int i=0;i<noOfNonTerminals;i++){
+        printf("First set of %s \n ",firstFollow[i].nonTerminal);
+        for(int j=0;j<firstFollow[i].noOfFirst;j++){
+            printf("%s ",firstFollow[i].firstSet[j]);
+        }
+        printf("\n");
+        printf("Follow set of %s \n ",firstFollow[i].nonTerminal);
+        for(int j=0;j<firstFollow[i].noOfFollow;j++){
+            printf("%s ",firstFollow[i].followSet[j]);
+        }
+        printf("\n");
 
+    }
+}
 
+void printGrammarRules(){
+    // print the grammar rules
+    for (int i = 0; i < lineNumber; i++)
+    {
+        printf("%s ->   ", grammarRule[i].leftElement);
+        for (int j = 0; j < grammarRule[i].noOfElements; j++)
+        {
+            printf("%s ", grammarRule[i].rightElements[j]);
+        }
+        printf("\n");
+    }
+}
+void printParseTable(){
+    printf("Parse Table\n");
+    printf("Non Terminals ");
+    for(int i=0;i<PARSECOL;i++){
+        printf("%s ",terminals[i]);
+    }
+    printf("\n");
+    for(int i=0;i<noOfNonTerminals;i++){
+        printf("%s ",firstFollow[i].nonTerminal);
+        for(int j=0;j<PARSECOL;j++){
+            if(parseTable[i][j]==-1){
+                printf("error ");
+            }
+            else if(parseTable[i][j]==-2){
+                printf("sync ");
+            }
+            else{
+                printf("%d ",parseTable[i][j]);
+            }
+        }
+        printf("\n");
+    }
+}
 
 int main()
 {
@@ -536,16 +607,7 @@ int main()
 
     fclose(fp);
 
-    // print the grammar rules
-    // for (int i = 0; i < lineNumber; i++)
-    // {
-    //     printf("%s ->   ", grammarRule[i].leftElement);
-    //     for (int j = 0; j < grammarRule[i].noOfElements; j++)
-    //     {
-    //         printf("%s ", grammarRule[i].rightElements[j]);
-    //     }
-    //     printf("\n");
-    // }
+    
 
     intialiseFFandLookup();
     
@@ -553,40 +615,11 @@ int main()
     populateFirst();
     populateFollow();
     createParseTable();
+    fillSyncInParseTable();
 
-    printf("No of non terminals %d\n",noOfNonTerminals);
-    //print terminals
-    for(int i=0;i<PARSECOL;i++){
-        printf(" %d %s \n",i,terminals[i]);
-    }
-    // for (int i = 0; i < noOfNonTerminals; i++)
-    // {
-    //     printf("%s %d %d %d\n", NTLookup[i].nonTerminal, NTLookup[i].ffIndex, NTLookup[i].grammarIndex,firstFollow[i].isEpsilon);
-    // }
-
-    for(int i=0;i<noOfNonTerminals;i++){
-        printf("First set of %s \n ",firstFollow[i].nonTerminal);
-        for(int j=0;j<firstFollow[i].noOfFirst;j++){
-            printf("%s ",firstFollow[i].firstSet[j]);
-        }
-        printf("\n");
-        printf("Follow set of %s \n ",firstFollow[i].nonTerminal);
-        for(int j=0;j<firstFollow[i].noOfFollow;j++){
-            printf("%s ",firstFollow[i].followSet[j]);
-        }
-        printf("\n");
-
-    }
-
-    for(int i=0;i<noOfNonTerminals;i++){
-        printf("%s \n",firstFollow[i].nonTerminal);
-        for(int j=0;j<PARSECOL;j++){
-            if(parseTable[i][j]!=-1){
-                printf("%d %s   ",parseTable[i][j],terminals[j]);
-            }
-        }
-        printf("\n");
-    }
+    //printParseTable();
+    printFirstFollow();
+    
 
     return 0;
 }
