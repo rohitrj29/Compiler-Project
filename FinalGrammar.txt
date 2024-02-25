@@ -48,7 +48,7 @@ fieldOrNot eps
 expansion TK_DOT TK_FIELDID
 expansions expansion expansions
 expansions eps
-funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS
+funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS inputParameters
 inputParameters TK_SEM
 inputParameters TK_SQL idList TK_SQR
 outputParameters TK_SQL idList TK_SQR TK_ASSIGNOP
