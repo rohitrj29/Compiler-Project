@@ -49,8 +49,9 @@ GrammarRule grammarRule[MAXRULES];
 NTLookupEntry NTLookup[MAXNONTERM];
 FirstFollow firstFollow[MAXNONTERM];
 char terminals[PARSECOL][MAXTERM];
-// char *terminals[54] = {"$", "TK_ASSIGNOP", "TK_COMMENT", "TK_FIELDID", "TK_ID", "TK_NUM", "TK_RNUM", "TK_FUNID", "TK_RECORDID", "TK_WITH", "TK_PARAMETERS", "TK_END", "TK_WHILE", "TK_TYPE", "TK_MAIN", "TK_GLOBAL", "TK_PARAMETER", "TK_LIST", "TK_SQL", "TK_SQR", "TK_INPUT", "TK_OUTPUT", "TK_INT", "TK_REAL", "TK_COMMA", "TK_SEM", "TK_COLON", "TK_DOT", "TK_ENDWHILE", "TK_OP", "TK_CL", "TK_IF", "TK_THEN", "TK_ENDIF", "TK_READ", "TK_WRITE", "TK_RETURN", "TK_PLUS", "TK_MINUS", "TK_MUL", "TK_DIV", "TK_CALL", "TK_RECORD", "TK_ENDRECORD", "TK_ELSE", "TK_AND", "TK_OR", "TK_NOT", "TK_LT", "TK_LE", "TK_EQ", "TK_GT", "TK_GE", "TK_NE"};
-// int ffsize = 0;
+int parseTable[55][PARSECOL];
+
+
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray) {
@@ -388,11 +389,6 @@ parser table population
 using first and follow set of non terminals
 */
 
-
-//fill terminals from finalGrammar.txt
-
-//TODO: automate terminals population
-
 //pass a terminal and get its index
 int getTerminalIndex(char *terminal)
 {
@@ -408,32 +404,17 @@ int getTerminalIndex(char *terminal)
 
 bool isTerminal(char *element)
 {
-    if((element[0] >= 'A' && element[0] <= 'Z')|| element[0] == '$')
+    if((element[0] == 'T')|| element[0] == '$')
     {
         return true;
     }
     return false;
 }
 
-// int ffsize = sizeof(firstFollow) / sizeof(FirstFollow);
-int parseTable[55][PARSECOL];
-
-// bool hasepsilon(int ntindex)
-// {
-//     for(int i = 0; i < firstFollow[ntindex].noOfFirst; i++)
-//     {
-//         if(strcmp(firstFollow[ntindex].firstSet[i], "eps") == 0)
-//         {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
 
 void createParseTable()
 {   
     memset(parseTable, -1, sizeof(parseTable));
-    //TODO: Implement sync
 
     for(int gindex = 0; gindex<102; gindex++)
     {
@@ -627,3 +608,4 @@ int main()
 
     return 0;
 }
+
