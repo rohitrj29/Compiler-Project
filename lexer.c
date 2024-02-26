@@ -421,7 +421,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else
                 {
                     //twinBuffer -> forward --;
-                    char *tk_id = "TK_FUN_ID";
+                    char *tk_id = "TK_FUNID";
                     temp[tempIndex]='\0';
                     twinBuffer->lexBegin=twinBuffer->forward;
                     return returnToken(tokenInfo, temp, tk_id, lineNumber);
@@ -441,7 +441,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else
                 {
                     //twinBuffer -> forward --;
-                    char *tk_id = "TK_FUN_ID";
+                    char *tk_id = "TK_FUNID";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
                     return returnToken(tokenInfo, temp, tk_id, lineNumber);

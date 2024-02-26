@@ -78,7 +78,7 @@ typedef struct {
     int top;
 } Stack;
 
-void initializeStack(Stack *stack);
+Stack* initializeStack(Stack *stack);
 int isEmpty(Stack *stack);
 int isFull(Stack *stack);
 void push(Stack *stack, StackElement *str);
@@ -87,9 +87,10 @@ StackElement* peek(Stack *stack);
 void freeStack(Stack *stack);
 
 
-void initializeStack(Stack *stack) {
+Stack* initializeStack(Stack *stack) {
     stack = (Stack *) malloc(sizeof(Stack));
     stack->top = -1;
+    return stack;
 }
 
 int isEmpty(Stack *stack) {
@@ -590,6 +591,12 @@ void fillSyncInParseTable()
             if(parseTable[i][followIndex] == -1)
                 parseTable[i][followIndex] = -2;
         }
+        for(int k = 0; k < firstFollow[i].noOfFirst; k++)
+        {
+            int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
+            if(parseTable[i][firstIndex] == -1)
+                parseTable[i][firstIndex] = -2;
+        }
             
         
     }
@@ -598,20 +605,20 @@ void fillSyncInParseTable()
 
 void createParseTree(char **input) {
     Stack *myStack;
-    initializeStack(myStack);
+    myStack = initializeStack(myStack);
     int i = 0;
-    char token[MAXELE];
+    char token[MAXTERM];
     strcpy(token, input[i ++]);
 
-    ParseTreeNode *root = createNewParseTreeNode(token);    
+    ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);    
     StackElement *dollar = createNewStackElement("$");
     push(myStack, dollar);
 
-    StackElement *startSymbolEle = createNewStackElement(token);
+    StackElement *startSymbolEle = createNewStackElement(grammarRule[0].leftElement);
     startSymbolEle -> nodePointer = root;
     push(myStack, startSymbolEle);
 
-    strcpy(token, input[i ++]);
+    // strcpy(token, input[i ++]);
 
     int success = 1;
     while (token[0] != '$') {  
@@ -755,6 +762,7 @@ char **populateInputStream() {
         char *token = strtok(line, " ");
 
         while (token != NULL) {
+            input[i] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(input[i ++], token);
 
             token = strtok(NULL, " ");
