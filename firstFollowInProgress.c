@@ -441,7 +441,7 @@ void createParseTable()
         int ntindex = entry.ffIndex;
         FirstFollow ff = firstFollow[ntindex];
         GrammarRule rule = grammarRule[gindex];
-
+        // ntindex=10
         //only right[0] needs to be checked
         // for(int rhsIndex = 0; rhsIndex < rule.noOfElements; rhsIndex++)
         // {
@@ -469,8 +469,12 @@ void createParseTable()
                 int nonTerminalIndex = getNTLookup(element).ffIndex;
                 for(int findex = 0; findex < firstFollow[nonTerminalIndex].noOfFirst; findex++)
                 {
+                    
                     char firstElement[MAXTERM];
                     strcpy(firstElement, firstFollow[nonTerminalIndex].firstSet[findex]);
+                    if(strcmp(firstElement, "eps") == 0){
+                        continue;
+                    }
                     int firstIndex = getTerminalIndex(firstElement);
                     parseTable[ntindex][firstIndex] = gindex;
                 }
@@ -617,8 +621,8 @@ int main()
     createParseTable();
     fillSyncInParseTable();
 
-    //printParseTable();
-    printFirstFollow();
+    printParseTable();
+    // printFirstFollow();
     
 
     return 0;
