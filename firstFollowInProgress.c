@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "parseTreeStack.h"
 
 #define MAXELE 20
 #define LINESIZE 1000
@@ -51,8 +52,179 @@ FirstFollow firstFollow[MAXNONTERM];
 char terminals[PARSECOL][MAXTERM];
 int parseTable[55][PARSECOL];
 
-
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
+
+void initializeStack(Stack *stack) {
+    stack = (Stack *) malloc(sizeof(Stack));
+    stack->top = -1;
+}
+
+int isEmpty(Stack *stack) {
+    return (stack->top == -1);
+}
+
+int isFull(Stack *stack) {
+    return (stack->top == MAX_SIZE - 1);
+}
+
+void push(Stack *stack, StackElement *stackEle) {
+    if (isFull(stack)) {
+        printf("Stack overflow!\n");
+        return;
+    }
+
+    stack->top++;
+    stack->items[stack->top] = stackEle;
+}
+
+StackElement* pop(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack underflow!\n");
+        return NULL;
+    }
+
+    return stack->items[stack->top--];
+}
+
+
+StackElement* peek(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty!\n");
+        return NULL;
+    }
+
+    return stack->items[stack->top];
+}
+
+ParseTreeNode *peekPointer(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty!\n");
+        return NULL;
+    }
+    
+    return stack -> 
+}
+
+StackElement *createNewStackElement (char lexeme[MAXTERM]) {
+    StackElement *stackElement = (StackElement *) malloc (sizeof(StackElement));
+    stackElement -> nodePointer = NULL;
+    stackElement -> lexeme = lexeme;
+
+    return stackElement;
+}
+
+ParseTreeNode* createNewParseTreeNode(char *lex) {
+    ParseTreeNode *treeElement = (ParseTreeNode *) malloc (sizeof(ParseTreeNode));
+    treeElement -> children = NULL;
+    treeElement -> lexeme = lex;
+    treeElement -> numChildren = 0;
+
+    return treeElement;
+}
+
+void freeStack(Stack *stack) {
+    while (!isEmpty(stack)) {
+        free(pop(stack));
+    }
+}
+
+void printInOrder(ParseTreeNode *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    // Traverse each child node
+    for (int i = 0; i < root -> numChildren; i++) {
+        printInOrder(root->children[i]);
+        printf("%s ", root->lexeme);
+    }
+
+    printf("\n");
+}
+
+void createParseTree(char **input) {
+    Stack *myStack;
+    initializeStack(myStack);
+
+    char token[MAXELE];
+    token = strtok(input, " ");
+
+    ParseTreeNode *root = createNewParseTreeNode(token);    
+    StackElement *dollar = createNewStackElement("$");
+    push(myStack, dollar);
+
+    StackElement *startSymbolEle = createNewStackElement(token);
+    startSymbolEle -> nodePointer = root;
+    push(myStack, startSymbolEle);
+
+    token = strtok(NULL, " ");
+
+    int success = 1;
+    while (token[0] != '$') {  
+        StackElement *topElement = peek(myStack);
+        //index of token in the parse table and index of topElement in the parse table
+        int tokenIndex = getTerminalIndex(token);
+        int topElementIndex = -1;
+        if(!isTerminal(topElement -> lexeme)){
+            topElementIndex = getNTLookup(topElement -> lexeme).ffIndex;
+        }
+        
+        //both token and topElement are $ end 
+        if (token[0]=='$' && topElement -> lexeme[0] == '$') {
+            break;
+        } else if (topElementIndex == -1) {
+            success = 0;
+            break;
+        }
+
+        ParseTreeNode *currTreePointer = topElement -> nodePointer;
+        
+        int tableValue = parseTable[topElementIndex][tokenIndex];
+        
+        if (isTerminal(token) && isTerminal(topElement -> lexeme) && strcmp(token, topElement -> lexeme) == 0) {
+            token = strtok(NULL, " ");
+            pop (myStack);
+            free (topElement);
+        }  else if (tableValue == -2) {
+            pop (myStack);
+            free (topElement);            
+        } else if (tableValue == -1) {
+            token = strtok(NULL, " ");
+        } else if (tableValue >= 0) {
+            GrammarRule rule = grammarRule[tableValue];
+            
+            for (int i = rule.noOfElements - 1; i >= 0; i--) {
+                StackElement *newElement = createNewStackElement(rule.rightElements[i]);                
+                ParseTreeNode *treeNode = createNewParseTreeNode(rule.rightElements[i]);
+
+                newElement -> nodePointer = treeNode;
+
+                int originalChildren = currTreePointer -> numChildren;
+                currTreePointer -> children[originalChildren] = treeNode;
+                currTreePointer -> numChildren ++;
+
+                push(myStack, newElement);
+            }
+        } else {
+            /*error cases
+            1. if both the top of the stack and token is a terminal is not equal to it
+            */
+           success = 0;
+           break;
+        }
+    }
+
+    if (!success) {
+        printf("Some Error occurred!!!\n");
+    } else {
+        printf("The Parse Tree has been created (EZ)\n");
+        printf("%s\n", root -> lexeme);
+        printInOrder(root);
+    }
+
+    // if stack is not empty pop it out 
+    free(myStack);
+}
 
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray) {
     for (int i = 0; i < noOfEleInArray; i++) {
