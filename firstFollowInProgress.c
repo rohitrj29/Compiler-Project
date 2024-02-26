@@ -743,6 +743,28 @@ void printParseTable(){
     }
 }
 
+char **populateInputStream() {
+    FILE *fp;
+    fp = fopen("./parseTreeCustomInput.txt", "r");
+
+    char line[LINESIZE], **input;
+    input = (char **) malloc (sizeof(char *) * LINESIZE);
+    int i = 0;
+
+    while (fgets(line, LINESIZE, fp) != NULL) {
+        char *token = strtok(line, " ");
+
+        while (token != NULL) {
+            strcpy(input[i ++], token);
+
+            token = strtok(NULL, " ");
+        }
+    }
+
+    fclose(fp);
+    return input;
+}
+
 int main()
 {
     FILE *fp;
@@ -795,7 +817,8 @@ int main()
     populateFollow();
     createParseTable();
     fillSyncInParseTable();
-    createParseTree();
+    char **inputStream = populateInputStream();
+    createParseTree(inputStream);
     
     // printParseTable();
     // printFirstFollow();

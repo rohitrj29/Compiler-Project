@@ -133,8 +133,6 @@ int fromZeroToWhere(char currentCharacter) {
 
 
 TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber) {
-
-
     tokenInfo -> value = value;
     tokenInfo -> tkId = tokenID;
     tokenInfo -> linenumber = lineNumber;
@@ -896,7 +894,7 @@ void destroyHashMap(HashMap *map) {
 int main() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\Compiler\\t1(1).txt", "r");
+    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t2.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -932,7 +930,7 @@ int main() {
             }
             printf("%s ", getValue(myMap,tkinfo->value));
             //printf("%s ",tkinfo->tkId);
-            printf("%s \n",tkinfo->value);
+            //printf("%s \n",tkinfo->value);
         }
         
     }
