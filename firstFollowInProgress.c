@@ -154,12 +154,13 @@ void freeStack(Stack *stack) {
 }
 
 void printInOrder(ParseTreeNode *root) {
-    if (root == NULL) {
+    if (root->lexeme == NULL) {
         return;
     }
 
     // Traverse each child node
-    for (int i = root -> numChildren; i >=0 ; i--) {
+    for (int i = root -> numChildren - 1; i >=0 ; i--) {
+        if(root->children[i]->numChildren>0)
         printInOrder(root -> children[i]);
         printf("%s ", root->lexeme);
     }
@@ -631,21 +632,23 @@ void createParseTree(char **input) {
         }
         
         //both token and topElement are $ end 
-        if (token[0]=='$' && topElement -> lexeme[0] == '$') {
-            break;
-        } else if (topElementIndex == -1) {
-            success = 0;
-            break;
-        }
+        
 
         ParseTreeNode *currTreePointer = topElement -> nodePointer;
         
-        int tableValue = parseTable[topElementIndex][tokenIndex];
+        int tableValue = -3;
+        if(topElementIndex>=0)
+        tableValue=parseTable[topElementIndex][tokenIndex];
         
         if (isTerminal(token) && isTerminal(topElement -> lexeme) && strcmp(token, topElement -> lexeme) == 0) {
             strcpy(token, input[i ++]);
             pop (myStack);
             free (topElement);
+        }else if (token[0]=='$' && topElement -> lexeme[0] == '$') {
+            break;
+        } else if (topElementIndex == -1) {
+            success = 0;
+            break;
         }  else if (tableValue == -2) {
             pop (myStack);
             free (topElement);            
@@ -666,7 +669,8 @@ void createParseTree(char **input) {
 
                 push(myStack, newElement);
             }
-        } else {
+        } 
+        else {
             /*error cases
             1. if both the top of the stack and token is a terminal is not equal to it
             */
