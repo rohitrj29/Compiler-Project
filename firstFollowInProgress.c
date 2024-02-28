@@ -437,15 +437,15 @@ void findFollow(int ffIndex){
                         }
                             if(firstFollow[check.ffIndex].isEpsilon){
 
-                                if(firstFollow[check.ffIndex].followCalc==true){
-                                    //popoulate follow set with first set of right element
-                                    populateFollowFromFirst(ffIndex, check.ffIndex);
-                                    //populate follow set with follow set of right element
-                                    populateFollowFromFollow(ffIndex, check.ffIndex);
-                                    found=0;
-                                }
-                                else
-                                {
+                                // if(firstFollow[check.ffIndex].followCalc==true){
+                                //     //popoulate follow set with first set of right element
+                                //     populateFollowFromFirst(ffIndex, check.ffIndex);
+                                //     //populate follow set with follow set of right element
+                                //     populateFollowFromFollow(ffIndex, check.ffIndex);
+                                //     found=0;
+                                // }
+                                // else
+                                // {
                                 
                                     if(j+1==grammarRule[i].noOfElements-1){
                                     
@@ -470,7 +470,7 @@ void findFollow(int ffIndex){
                                      
                                     
                                     }
-                                }
+                                // }
                                 
                             }
                             else{
@@ -761,7 +761,7 @@ void printParseTable(){
 
 char **populateInputStream() {
     FILE *fp;
-    fp = fopen("./parseInput.txt", "r");
+    fp = fopen("./parseTreeCustomInput.txt", "r");
 
     char line[LINESIZE], **input;
     input = (char **) malloc (sizeof(char *) * LINESIZE);
