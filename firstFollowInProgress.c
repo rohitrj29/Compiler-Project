@@ -162,7 +162,7 @@ void printInOrder(ParseTreeNode *root) {
     for (int i = root -> numChildren - 1; i >=0 ; i--) {
         if(root->children[i]->numChildren>0)
         printInOrder(root -> children[i]);
-        printf("%s ", root->lexeme);
+        printf("%s ", root->children[i]->lexeme);
     }
 
     printf("\n");
@@ -658,6 +658,11 @@ void createParseTree(char **input) {
             GrammarRule rule = grammarRule[tableValue];
             
             for (int i = rule.noOfElements - 1; i >= 0; i--) {
+                if(strcmp(rule.rightElements[i], "eps") == 0) 
+                {   
+                    pop(myStack);
+                    continue;
+                }
                 StackElement *newElement = createNewStackElement(rule.rightElements[i]);                
                 ParseTreeNode *treeNode = createNewParseTreeNode(rule.rightElements[i]);
 
@@ -679,7 +684,7 @@ void createParseTree(char **input) {
         }
     }
 
-    if (!success) {
+    if (!success ) {
         printf("Some Error occurred!!!\n");
     } else {
         printf("The Parse Tree has been created (EZ)\n");
@@ -756,7 +761,7 @@ void printParseTable(){
 
 char **populateInputStream() {
     FILE *fp;
-    fp = fopen("./parseTreeCustomInput.txt", "r");
+    fp = fopen("./parseInput.txt", "r");
 
     char line[LINESIZE], **input;
     input = (char **) malloc (sizeof(char *) * LINESIZE);
