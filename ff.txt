@@ -1,28 +1,28 @@
-First set of program
- TK_FUNID TK_MAIN
-Follow set of program
- $
-First set of mainFunction
- TK_MAIN
-Follow set of mainFunction
- $
-First set of otherFunctions
- TK_FUNID eps
-Follow set of otherFunctions
- TK_MAIN
-First set of function
- TK_FUNID
-Follow set of function
- TK_FUNID TK_MAIN
-First set of input_par
- TK_INPUT
-Follow set of input_par
- TK_OUTPUT TK_SEM
-First set of output_par
+First set of program 
+ TK_FUNID TK_MAIN 
+Follow set of program 
+ $ 
+First set of mainFunction 
+ TK_MAIN 
+Follow set of mainFunction 
+ $ 
+First set of otherFunctions 
+ TK_FUNID eps 
+Follow set of otherFunctions 
+ TK_MAIN 
+First set of function 
+ TK_FUNID 
+Follow set of function 
+ TK_FUNID TK_MAIN 
+First set of input_par 
+ TK_INPUT 
+Follow set of input_par 
+ TK_OUTPUT TK_SEM 
+First set of output_par 
  TK_OUTPUT eps 
-Follow set of output_par
- TK_SEM
-First set of parameter_list
+Follow set of output_par 
+ TK_SEM 
+First set of parameter_list 
  TK_INT TK_REAL TK_RECORD TK_UNION TK_RUID
 Follow set of parameter_list
  TK_SQR
@@ -40,26 +40,26 @@ Follow set of constructedDataType
  TK_ID TK_COLON
 First set of remaining_list
  TK_COMMA eps
-Follow set of remaining_list
+Follow set of remaining_list 
  TK_SQR
 First set of stmts
  TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 Follow set of stmts
  TK_END
-First set of typeDefinitions 
+First set of typeDefinitions
  TK_RECORD TK_UNION TK_DEFINETYPE eps
 Follow set of typeDefinitions
- TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of actualOrRedefined
  TK_RECORD TK_UNION TK_DEFINETYPE
 Follow set of actualOrRedefined
- TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of typeDefinition
  TK_RECORD TK_UNION
 Follow set of typeDefinition
- TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of fieldDefinitions
- TK_TYPE 
+ TK_TYPE
 Follow set of fieldDefinitions
  TK_ENDRECORD TK_ENDUNION
 First set of fieldDefinition
@@ -67,7 +67,7 @@ First set of fieldDefinition
 Follow set of fieldDefinition
  TK_TYPE TK_ENDRECORD TK_ENDUNION
 First set of fieldType
- TK_INT TK_REAL TK_FUNID TK_MAIN
+ TK_INT TK_REAL TK_RECORD TK_UNION TK_RUID 
 Follow set of fieldType
  TK_COLON
 First set of moreFields
@@ -75,13 +75,13 @@ First set of moreFields
 Follow set of moreFields
  TK_ENDRECORD TK_ENDUNION
 First set of declarations
- TK_TYPE eps
+ TK_TYPE eps 
 Follow set of declarations
- TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF 
+ TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of declaration
  TK_TYPE
 Follow set of declaration
- TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of global_or_not
  TK_COLON eps
 Follow set of global_or_not
@@ -93,8 +93,8 @@ Follow set of otherStmts
 First set of stmt
  TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL
 Follow set of stmt
- TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
-First set of assignmentStmt 
+ TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF 
+First set of assignmentStmt
  TK_ID
 Follow set of assignmentStmt
  TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
@@ -105,7 +105,7 @@ Follow set of singleOrRecId
 First set of fieldOrNot
  TK_DOT eps
 Follow set of fieldOrNot
- TK_ASSIGNOP TK_CL TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE
+ TK_ASSIGNOP TK_CL TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE 
 First set of expansion
  TK_DOT
 Follow set of expansion
@@ -115,13 +115,13 @@ First set of expansions
 Follow set of expansions
  TK_ASSIGNOP TK_CL TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE
 First set of funCallStmt
- TK_SQL TK_CALL
+ TK_SQL TK_CALL 
 Follow set of funCallStmt
  TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
 First set of inputParameters
  TK_SEM TK_SQL
 Follow set of inputParameters
- TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF 
+ TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
 First set of outputParameters
  TK_SQL eps
 Follow set of outputParameters
@@ -129,7 +129,7 @@ Follow set of outputParameters
 First set of iterativeStmt
  TK_WHILE
 Follow set of iterativeStmt
- TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF 
 First set of conditionalStmt
  TK_IF
 Follow set of conditionalStmt
@@ -141,13 +141,13 @@ Follow set of elseBlock
 First set of ioStmt
  TK_READ TK_WRITE
 Follow set of ioStmt
- TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF 
 First set of arithmeticExpression
  TK_OP TK_ID TK_NUM TK_RNUM TK_RUID
 Follow set of arithmeticExpression
  TK_SEM TK_CL
 First set of addSubRem
- TK_PLUS TK_MINUS eps 
+ TK_PLUS TK_MINUS eps
 Follow set of addSubRem
  TK_SEM TK_CL
 First set of unit
@@ -161,13 +161,13 @@ Follow set of nestedExp
 First set of mulDivRem
  TK_MUL TK_DIV eps
 Follow set of mulDivRem
- TK_PLUS TK_MINUS TK_SEM TK_CL
+ TK_PLUS TK_MINUS TK_SEM TK_CL 
 First set of varAndRecord
  TK_ID TK_NUM TK_RNUM TK_RUID
 Follow set of varAndRecord
  TK_FUNID TK_MAIN
 First set of recordField
- TK_DOT eps 
+ TK_DOT eps
 Follow set of recordField
  TK_FUNID TK_MAIN
 First set of mulDiv
@@ -186,7 +186,7 @@ First set of var
  TK_ID TK_NUM TK_RNUM
 Follow set of var
  TK_CL TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE
-First set of logicalOp
+First set of logicalOp 
  TK_AND TK_OR
 Follow set of logicalOp
  TK_OP
@@ -210,10 +210,10 @@ First set of more_ids
  TK_COMMA eps
 Follow set of more_ids
  TK_SQR
-First set of definetypestmt
+First set of definetypestmt 
  TK_DEFINETYPE
 Follow set of definetypestmt
- TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN TK_ENDWHILE TK_ELSE TK_ENDIF
+ TK_RECORD TK_UNION TK_DEFINETYPE TK_TYPE TK_ID TK_WHILE TK_IF TK_READ TK_WRITE TK_SQL TK_CALL TK_RETURN
 First set of A
  TK_RECORD TK_UNION
 Follow set of A

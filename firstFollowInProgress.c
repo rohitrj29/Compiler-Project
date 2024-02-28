@@ -538,10 +538,12 @@ void createParseTable()
         GrammarRule rule = grammarRule[gindex];
         // ntindex=10
         //only right[0] needs to be checked
-        // for(int rhsIndex = 0; rhsIndex < rule.noOfElements; rhsIndex++)
-        // {
+        int flag=1;
+        for(int rhsIndex = 0; flag==1 && rhsIndex < rule.noOfElements; rhsIndex++)
+        {   
+            flag=0;
             char element[MAXTERM];
-            strcpy(element, rule.rightElements[0]);
+            strcpy(element, rule.rightElements[rhsIndex]);
             if(strcmp(element, "eps") == 0)
             {
                 for(int findex = 0; findex < ff.noOfFollow; findex++)
@@ -568,7 +570,18 @@ void createParseTable()
                     char firstElement[MAXTERM];
                     strcpy(firstElement, firstFollow[nonTerminalIndex].firstSet[findex]);
                     if(strcmp(firstElement, "eps") == 0){
-                        continue;
+                        //first of next element until not eps is matched
+                        flag=1;
+                        if(rhsIndex==rule.noOfElements-1){
+                            for(int findex = 0; findex < ff.noOfFollow; findex++)
+                            {
+                                char followElement[MAXTERM];
+                                strcpy(followElement, ff.followSet[findex]);
+                                int followIndex = getTerminalIndex(followElement);
+                                parseTable[ntindex][followIndex] = gindex;
+                            }
+                            flag=0;
+                        }
                     }
                     int firstIndex = getTerminalIndex(firstElement);
                     parseTable[ntindex][firstIndex] = gindex;
@@ -576,6 +589,7 @@ void createParseTable()
 
 
             }
+        }
 
     }
 }
@@ -835,9 +849,9 @@ int main()
     createParseTable();
     fillSyncInParseTable();
     char **inputStream = populateInputStream();
-    createParseTree(inputStream);
+    // createParseTree(inputStream);
     
-    // printParseTable();
+    printParseTable();
     // printFirstFollow();
     
     return 0;
