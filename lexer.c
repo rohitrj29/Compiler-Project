@@ -634,11 +634,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 49: 
                 if(currentCharacter == '='){
                     char *tk_id = "TK_EQ";
-                    temp = "==";
+                    char *tk_v = "==";
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
@@ -894,7 +894,7 @@ void destroyHashMap(HashMap *map) {
 int main() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t2.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t5.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -919,7 +919,8 @@ int main() {
             printf("%s\n","error");
             continue;
         }
-        else if(tkinfo->value=="$"){
+        else if(strcmp(tkinfo->value,"$")==0){
+            printf("%s",tkinfo->value);
             break;
         }
         else

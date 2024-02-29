@@ -7,7 +7,7 @@
 
 #define MAX_SIZE 150
 #define MAXELE 20
-#define LINESIZE 1000
+#define LINESIZE 100000
 #define MAXTERM 50
 #define MAXNONTERM 150
 #define MAXRULES 120
@@ -606,14 +606,14 @@ void fillSyncInParseTable()
             if(parseTable[i][followIndex] == -1)
                 parseTable[i][followIndex] = -2;
         }
-        for(int k = 0; k < firstFollow[i].noOfFirst; k++)
-        {
-            int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
-            if(strcmp(firstFollow[i].firstSet[k],"eps")==0)
-            continue;
-            if(parseTable[i][firstIndex] == -1)
-                parseTable[i][firstIndex] = -2;
-        }
+        // for(int k = 0; k < firstFollow[i].noOfFirst; k++)
+        // {
+        //     int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
+        //     if(strcmp(firstFollow[i].firstSet[k],"eps")==0)
+        //     continue;
+        //     if(parseTable[i][firstIndex] == -1)
+        //         parseTable[i][firstIndex] = -2;
+        // }
             
         
     }
@@ -853,6 +853,7 @@ int main()
     createParseTable();
     fillSyncInParseTable();
     char **inputStream = populateInputStream();
+    // printf("%s",inputStream[122]);
     createParseTree(inputStream);
     
     // printParseTable();
