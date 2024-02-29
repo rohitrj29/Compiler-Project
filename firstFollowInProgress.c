@@ -64,7 +64,7 @@ struct ParseTreeNode;
 
 typedef struct ParseTreeNode {
     char lexeme[MAXTERM];
-    struct ParseTreeNode* children[MAXELE];
+    struct ParseTreeNode* children[MAX_SIZE];
     int numChildren;
 } ParseTreeNode;
 
@@ -623,9 +623,9 @@ void fillSyncInParseTable()
 void createParseTree(char **input) {
     Stack *myStack;
     myStack = initializeStack(myStack);
-    int i = 0;
+    int i1 = 0;
     char token[MAXTERM];
-    strcpy(token, input[i ++]);
+    strcpy(token, input[i1 ++]);
 
     ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);    
     StackElement *dollar = createNewStackElement("$");
@@ -657,7 +657,7 @@ void createParseTree(char **input) {
         tableValue=parseTable[topElementIndex][tokenIndex];
         
         if (isTerminal(token) && isTerminal(topElement -> lexeme) && strcmp(token, topElement -> lexeme) == 0) {
-            strcpy(token, input[i ++]);
+            strcpy(token, input[i1 ++]);
             pop (myStack);
             free (topElement);
         }else if (token[0]=='$' && topElement -> lexeme[0] == '$') {
@@ -669,7 +669,7 @@ void createParseTree(char **input) {
             pop (myStack);
             free (topElement);            
         } else if (tableValue == -1) {
-            strcpy(token, input[i ++]);
+            strcpy(token, input[i1 ++]);
         } else if (tableValue >= 0) {
             GrammarRule rule = grammarRule[tableValue];
             

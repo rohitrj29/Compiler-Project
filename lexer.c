@@ -916,7 +916,7 @@ int main() {
         tkinfo=getNextToken(twinBuffer,filePointer);
         if(tkinfo->tkId==NULL)
         {
-            printf("%s\n","error");
+            // printf("%s\n","error");
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
