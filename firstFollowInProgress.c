@@ -609,6 +609,8 @@ void fillSyncInParseTable()
         for(int k = 0; k < firstFollow[i].noOfFirst; k++)
         {
             int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
+            if(strcmp(firstFollow[i].firstSet[k],"eps")==0)
+            continue;
             if(parseTable[i][firstIndex] == -1)
                 parseTable[i][firstIndex] = -2;
         }
@@ -816,11 +818,13 @@ int main()
         int i = 0;
 
         while (token != NULL)
-        {
+        {   
+            
             int len=strlen(token);
             if(token[len-1]=='\n'){
                 token[len-1]='\0';
             }
+            
             if (i == 0)
             {
                 strcpy(grammarRule[lineNumber].leftElement, token);
@@ -849,9 +853,9 @@ int main()
     createParseTable();
     fillSyncInParseTable();
     char **inputStream = populateInputStream();
-    // createParseTree(inputStream);
+    createParseTree(inputStream);
     
-    printParseTable();
+    // printParseTable();
     // printFirstFollow();
     
     return 0;

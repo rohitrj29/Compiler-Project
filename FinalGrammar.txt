@@ -64,7 +64,7 @@ addSubRem addSub unit addSubRem
 addSubRem eps
 unit nestedExp mulDivRem
 nestedExp TK_OP arithmeticExpression TK_CL
-nestedExp varAndRecord 
+nestedExp varAndRecord
 mulDivRem mulDiv nestedExp mulDivRem
 mulDivRem eps
 varAndRecord TK_ID
