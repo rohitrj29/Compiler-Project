@@ -48,8 +48,7 @@ fieldOrNot eps
 expansion TK_DOT TK_FIELDID
 expansions expansion expansions
 expansions eps
-funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS inputParameters
-inputParameters TK_SEM
+funCallStmt outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS inputParameters TK_SEM
 inputParameters TK_SQL idList TK_SQR
 outputParameters TK_SQL idList TK_SQR TK_ASSIGNOP
 outputParameters eps
@@ -64,15 +63,9 @@ addSubRem addSub unit addSubRem
 addSubRem eps
 unit nestedExp mulDivRem
 nestedExp TK_OP arithmeticExpression TK_CL
-nestedExp varAndRecord
+nestedExp var
 mulDivRem mulDiv nestedExp mulDivRem
 mulDivRem eps
-varAndRecord TK_ID
-varAndRecord TK_NUM
-varAndRecord TK_RNUM
-varAndRecord TK_RUID recordField
-recordField TK_DOT TK_FIELDID
-recordField eps
 mulDiv TK_MUL
 mulDiv TK_DIV
 addSub TK_PLUS

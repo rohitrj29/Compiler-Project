@@ -11,7 +11,7 @@
 #define MAXTERM 50
 #define MAXNONTERM 150
 #define MAXRULES 120
-#define TOTALRULES 102
+#define TOTALRULES 95
 #define PARSECOL 57
 
 
@@ -320,7 +320,7 @@ NTLookupEntry getNTLookup(char *nonTerminal)
 
 void findFirst(int ffind, int grammarInd) {
 
-    for(int i=grammarInd; i<102;i++) {
+    for(int i=grammarInd; i<TOTALRULES;i++) {
         if(strcmp(grammarRule[i].leftElement, NTLookup[ffind].nonTerminal) != 0) {
             break;
         }
@@ -530,7 +530,7 @@ void createParseTable()
 {   
     memset(parseTable, -1, sizeof(parseTable));
 
-    for(int gindex = 0; gindex<102; gindex++)
+    for(int gindex = 0; gindex<TOTALRULES; gindex++)
     {
         NTLookupEntry entry = getNTLookup(grammarRule[gindex].leftElement);
         int ntindex = entry.ffIndex;
@@ -676,6 +676,7 @@ void createParseTree(char **input) {
             for (int i = rule.noOfElements - 1; i >= 0; i--) {
                 if(strcmp(rule.rightElements[i], "eps") == 0) 
                 {   
+                    //printf("%s\n",myStack->items[myStack->top]->lexeme);
                     pop(myStack);
                     continue;
                 }
@@ -853,10 +854,11 @@ int main()
     createParseTable();
     fillSyncInParseTable();
     char **inputStream = populateInputStream();
-    // printf("%s",inputStream[122]);
+    
     createParseTree(inputStream);
     
     // printParseTable();
+
     // printFirstFollow();
     
     return 0;
