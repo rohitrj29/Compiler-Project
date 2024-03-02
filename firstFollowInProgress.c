@@ -551,6 +551,9 @@ void createParseTable()
                     char followElement[MAXTERM];
                     strcpy(followElement, ff.followSet[findex]);
                     int followIndex = getTerminalIndex(followElement);
+                    if(followIndex==56){
+                        bool test=true;
+                    }
                     parseTable[ntindex][followIndex] = gindex;
                 }
                 
@@ -558,6 +561,9 @@ void createParseTable()
             else if(isTerminal(element))
             {
                 int terminalIndex = getTerminalIndex(element);
+                if(terminalIndex==56){
+                    bool test=true;
+                }
                 parseTable[ntindex][terminalIndex] = gindex;
             }
             else
@@ -578,12 +584,19 @@ void createParseTable()
                                 char followElement[MAXTERM];
                                 strcpy(followElement, ff.followSet[findex]);
                                 int followIndex = getTerminalIndex(followElement);
+                                if(followIndex==56){
+                                    bool test=true;
+                                }
                                 parseTable[ntindex][followIndex] = gindex;
                             }
                             flag=0;
                         }
                     }
                     int firstIndex = getTerminalIndex(firstElement);
+                    if(firstIndex==56){
+                        bool test=true;
+                    }
+                    if(firstIndex!=-1)
                     parseTable[ntindex][firstIndex] = gindex;
                 }
 
@@ -648,7 +661,9 @@ void createParseTree(char **input) {
         }
         
         //both token and topElement are $ end 
-        
+        if(strcmp(token,"TK_RETURN")==0){
+            bool test=true;
+        }
 
         ParseTreeNode *currTreePointer = topElement -> nodePointer;
         
@@ -678,6 +693,7 @@ void createParseTree(char **input) {
                 {   
                     //printf("%s\n",myStack->items[myStack->top]->lexeme);
                     pop(myStack);
+                    free(topElement);
                     continue;
                 }
                 StackElement *newElement = createNewStackElement(rule.rightElements[i]);                
@@ -857,7 +873,10 @@ int main()
     
     createParseTree(inputStream);
     
-    // printParseTable();
+    //  printParseTable();
+    
+   
+    
 
     // printFirstFollow();
     

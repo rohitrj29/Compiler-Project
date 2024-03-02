@@ -43,8 +43,8 @@ stmt ioStmt
 stmt funCallStmt
 assignmentStmt singleOrRecId TK_ASSIGNOP arithmeticExpression TK_SEM
 singleOrRecId TK_ID fieldOrNot
-fieldOrNot expansion expansions
 fieldOrNot eps
+fieldOrNot expansion expansions
 expansion TK_DOT TK_FIELDID
 expansions expansion expansions
 expansions eps
