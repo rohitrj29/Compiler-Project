@@ -87,7 +87,7 @@ ParseTreeNode* createNewParseTreeNode(char *lex) {
     treeElement -> children[0] = NULL;
     strcpy(treeElement -> lexeme , lex);
     treeElement -> numChildren = 0;
-
+    treeElement -> outIndex = -1;
     return treeElement;
 }
 
@@ -107,7 +107,7 @@ void printParseTree(ParseTreeNode *root) {
         printParseTree(root -> children[i]);
         
     }
-    if(root->numChildren==0){
+    if(root->outIndex>=0){
         printf("Terminal : %s  Lexeme : %s Line No : %d \n", root->lexeme, value[root->outIndex],lineNo[root->outIndex]);
     }
     else{
@@ -577,7 +577,7 @@ void parseInputSourceCode() {
     strcpy(currtoken, token[ind ++]);
 
     ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);    
-    root->outIndex=ind;
+    root->outIndex=-1;
     StackElement *dollar = createNewStackElement("$");
     push(myStack, dollar);
 
@@ -586,7 +586,7 @@ void parseInputSourceCode() {
     push(myStack, startSymbolEle);
 
     int success = 1;
-    while (currtoken[0] != '$') {  
+    while (strcmp(currtoken,"EOF")!=0) {  
 
         //printing lexical error
 
@@ -616,15 +616,15 @@ void parseInputSourceCode() {
         tableValue=parseTable[topElementIndex][tokenIndex];
         
         if (isTerminal(currtoken) && isTerminal(topElement -> lexeme) && strcmp(currtoken, topElement -> lexeme) == 0) {
-            topElement -> nodePointer -> outIndex=ind;
+            topElement -> nodePointer -> outIndex=ind-1;
             strcpy(currtoken, token[ind ++]);
             pop (myStack);
             free (topElement);
-        }else if (currtoken[0]=='$' && topElement -> lexeme[0] == '$') {
+        }else if (strcmp(currtoken,"EOF") && topElement -> lexeme[0] == '$') {
             break;
         } else if (topElementIndex == -1) {
             success=0;
-            printf("Error: The token is %s for lexeme %s doesn't match the expected token %s \n",currtoken,value[ind],topElement->lexeme);
+            printf("Error: The token is %s for lexeme %s doesn't match the expected token %s \n",currtoken,value[ind-1],topElement->lexeme);
             strcpy(currtoken, token[ind ++]);
             pop (myStack);
             free (topElement);
@@ -636,7 +636,7 @@ void parseInputSourceCode() {
             free (topElement);            
         } else if (tableValue == -1) {
             success=0;
-            printf("Line No. %d Error: token skipped %s with value %s  \n",lineNo[ind],currtoken,value[ind]);
+            printf("Line No. %d Error: token skipped %s with value %s  \n",lineNo[ind-1],currtoken,value[ind-1]);
 
             strcpy(currtoken, token[ind ++]);
         } else if (tableValue >= 0) {
@@ -854,7 +854,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t1(1).txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t5.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -912,7 +912,7 @@ void runLexerAndParser() {
                 // printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
                 lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
-                strcpy(token[ind], tkinfo->tkId);
+                strcpy(token[ind], getValue(myMap,tkinfo->value));
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(value[ind],tkinfo->value);
                 

@@ -2,7 +2,7 @@
 #define PARSERDEF_H
 
 
-#define MAX_SIZE 150
+#define MAX_SIZE 250
 #define MAXELE 20
 #define LINESIZE 100000
 #define MAXTERM 50

@@ -1,6 +1,3 @@
-Line no. 1	 Lexeme %	 Token TK_COMMENT
-Line no. 2	 Lexeme %	 Token TK_COMMENT
-Line no. 3	 Lexeme %	 Token TK_COMMENT
 Line no. 4	 Lexeme _sumN	 Token TK_FUNID
 Line no. 4	 Lexeme input	 Token TK_INPUT
 Line no. 4	 Lexeme parameter	 Token TK_PARAMETER
