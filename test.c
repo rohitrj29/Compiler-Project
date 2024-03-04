@@ -1188,7 +1188,7 @@ void printParseTree(ParseTreeNode *root) {
         
     }
     if(root->outIndex>=0){
-        printf("Terminal : %s  Lexeme : %s Line No : %d \n", root->lexeme, value[root->outIndex],lineNo[root->outIndex]);
+        printf("Terminal : %s  Lexeme : %s Line : %d \n", root->lexeme, value[root->outIndex],lineNo[root->outIndex]);
     }
     else{
     printf("Non-Terminal : %s  \n", root->lexeme);
@@ -1685,7 +1685,7 @@ void parseInputSourceCode() {
             topElementIndex = getNTLookup(topElement -> lexeme).ffIndex;
         }
         
-        if(strcmp(topElement->lexeme,"TK_LIST")==0){
+        if(strcmp(currtoken,"TK_READ")==0){
             bool test=true;
         }
 
@@ -1700,23 +1700,22 @@ void parseInputSourceCode() {
             strcpy(currtoken, token[ind ++]);
             pop (myStack);
             free (topElement);
-        }else if (currtoken[0]=='$' && topElement -> lexeme[0] == '$') {
-            break;
-        } else if (topElementIndex == -1) {
+        }else if (topElementIndex == -1) {
             success=0;
-            printf("Error: The token is %s for lexeme %s doesn't match the expected token %s \n",currtoken,value[ind-1],topElement->lexeme);
-            strcpy(currtoken, token[ind ++]);
+            printf("Line %d Error: The token is %s for lexeme %s doesn't match the expected token %s \n",lineNo[ind-1],currtoken,value[ind-1],topElement->lexeme);
+            //strcpy(currtoken, token[ind ++]);
             pop (myStack);
             free (topElement);
 
         }  else if (tableValue == -2) {
             success=0;
-            printf("Sync Error: stack pop %s \n",topElement->lexeme);
+            if(strlen(topElement->lexeme)>2 && topElement->lexeme[0]=='T' && topElement->lexeme[1]=='K')
+            printf("Line  Invalid token %s encountered on the stack top %s \n",topElement->lexeme);
             pop (myStack);
             free (topElement);            
         } else if (tableValue == -1) {
             success=0;
-            printf("Line No. %d Error: token skipped %s with value %s  \n",lineNo[ind-1],currtoken,value[ind-1]);
+            printf("Line %d Error: token skipped %s with value %s  \n",lineNo[ind-1],currtoken,value[ind-1]);
 
             strcpy(currtoken, token[ind ++]);
         } else if (tableValue >= 0) {
@@ -1754,7 +1753,7 @@ void parseInputSourceCode() {
     }
 
     if (!success ) {
-        
+        return;
     } else {
         printf("Input Source Code is syntactically correct ........\n");
         printf("The inorder traversal of the parse tree is as follows: \n");
@@ -1829,28 +1828,7 @@ void printParseTable(){
     }
 }
 
-// char **populateInputStream() {
-//     FILE *fp;
-//     fp = fopen("./parseTreeCustomInput.txt", "r");
 
-//     char line[LINESIZE], **input;
-//     input = (char **) malloc (sizeof(char *) * LINESIZE);
-//     int i = 0;
-
-//     while (fgets(line, LINESIZE, fp) != NULL) {
-//         char *token = strtok(line, " ");
-
-//         while (token != NULL) {
-//             input[i] = (char *) malloc (sizeof(char) * MAXTERM);
-//             strcpy(input[i ++], token);
-
-//             token = strtok(NULL, " ");
-//         }
-//     }
-
-//     fclose(fp);
-//     return input;
-// }
 
 void  computeFirstAndFollowSets(){
     //populate first of all non terminals
@@ -2018,6 +1996,7 @@ void runLexerAndParser() {
         }
     }
 
+    // printf("%d \n",ind);
     parseInputSourceCode();
     
     free(token);

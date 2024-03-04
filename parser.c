@@ -541,139 +541,122 @@ void createParseTable()
     fillSyncInParseTable();
 }
 
-void parseInputSourceCode()
-{
+void parseInputSourceCode() {
     Stack *myStack;
     myStack = initializeStack(myStack);
     int ind = 0;
     char currtoken[MAXTERM];
-    strcpy(currtoken, token[ind++]);
+    strcpy(currtoken, token[ind ++]);
 
-    ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);
-    root->outIndex = -1;
+    ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);    
+    root->outIndex=-1;
     StackElement *dollar = createNewStackElement("$");
     push(myStack, dollar);
 
     StackElement *startSymbolEle = createNewStackElement(grammarRule[0].leftElement);
-    startSymbolEle->nodePointer = root;
+    startSymbolEle -> nodePointer = root;
     push(myStack, startSymbolEle);
 
     int success = 1;
-    while (strcmp(currtoken, "EOF") != 0)
-    {
+    while (strcmp(currtoken, "EOF") != 0) {  
 
-        // printing lexical error
+        //printing lexical error
 
-        if (strcmp(currtoken, "ERROR") == 0)
-        {
-            success = 0;
-            printf("%s  \n", value[ind - 1]);
-            strcpy(currtoken, token[ind++]);
+        if(strcmp(currtoken,"ERROR")==0){
+            success=0;
+            printf("%s  \n",value[ind-1]);
+            strcpy(currtoken, token[ind ++]);
             continue;
         }
 
         StackElement *topElement = peek(myStack);
-        // index of token in the parse table and index of topElement in the parse table
+        //index of token in the parse table and index of topElement in the parse table
         int tokenIndex = getTerminalIndex(currtoken);
         int topElementIndex = -1;
-        if (!isTerminal(topElement->lexeme))
-        {
-            topElementIndex = getNTLookup(topElement->lexeme).ffIndex;
+        if(!isTerminal(topElement -> lexeme)){
+            topElementIndex = getNTLookup(topElement -> lexeme).ffIndex;
+        }
+        
+        if(strcmp(currtoken,"TK_READ")==0){
+            bool test=true;
         }
 
-        if (strcmp(topElement->lexeme, "TK_LIST") == 0)
-        {
-            bool test = true;
-        }
-
-        ParseTreeNode *currTreePointer = topElement->nodePointer;
-
+        ParseTreeNode *currTreePointer = topElement -> nodePointer;
+        
         int tableValue = -3;
-        if (topElementIndex >= 0)
-            tableValue = parseTable[topElementIndex][tokenIndex];
-
-        if (isTerminal(currtoken) && isTerminal(topElement->lexeme) && strcmp(currtoken, topElement->lexeme) == 0)
-        {
-            topElement->nodePointer->outIndex = ind - 1;
-            strcpy(currtoken, token[ind++]);
-            pop(myStack);
-            free(topElement);
-        }
-        else if (currtoken[0] == '$' && topElement->lexeme[0] == '$')
-        {
+        if(topElementIndex>=0)
+        tableValue=parseTable[topElementIndex][tokenIndex];
+        
+        if (isTerminal(currtoken) && isTerminal(topElement -> lexeme) && strcmp(currtoken, topElement -> lexeme) == 0) {
+            topElement -> nodePointer -> outIndex=ind-1;
+            strcpy(currtoken, token[ind ++]);
+            pop (myStack);
+            free (topElement);
+        }else if(topElement->lexeme[0]=='$'){
             break;
         }
-        else if (topElementIndex == -1)
-        {
-            success = 0;
-            printf("Error: The token is %s for lexeme %s doesn't match the expected token %s \n", currtoken, value[ind - 1], topElement->lexeme);
-            strcpy(currtoken, token[ind++]);
-            pop(myStack);
-            free(topElement);
-        }
-        else if (tableValue == -2)
-        {
-            success = 0;
-            printf("Sync Error: stack pop %s \n", topElement->lexeme);
-            pop(myStack);
-            free(topElement);
-        }
-        else if (tableValue == -1)
-        {
-            success = 0;
-            printf("Line No. %d Error: token skipped %s with value %s  \n", lineNo[ind - 1], currtoken, value[ind - 1]);
+        else if (topElementIndex == -1) {
+            success=0;
+            printf("Line %d Error: The token is %s for lexeme %s doesn't match the expected token %s \n",lineNo[ind-1],currtoken,value[ind-1],topElement->lexeme);
+            //strcpy(currtoken, token[ind ++]);
+            pop (myStack);
+            free (topElement);
 
-            strcpy(currtoken, token[ind++]);
-        }
-        else if (tableValue >= 0)
-        {
+        }  else if (tableValue == -2) {
+            success=0;
+            if(strlen(topElement->lexeme)>2 && topElement->lexeme[0]=='T' && topElement->lexeme[1]=='K')
+            printf("Line  Invalid token %s encountered on the stack top %s \n",topElement->lexeme);
+            pop (myStack);
+            free (topElement);            
+        } else if (tableValue == -1) {
+            success=0;
+            printf("Line %d Error: token skipped %s with value %s  \n",lineNo[ind-1],currtoken,value[ind-1]);
+
+            strcpy(currtoken, token[ind ++]);
+        } else if (tableValue >= 0) {
             GrammarRule rule = grammarRule[tableValue];
             pop(myStack);
             free(topElement);
-            for (int i = rule.noOfElements - 1; i >= 0; i--)
-            {
-                if (strcmp(rule.rightElements[i], "eps") == 0)
-                {
-                    // printf("%s\n",myStack->items[myStack->top]->lexeme);
-                    //  pop(myStack);
-                    //  free(topElement);
+            for (int i = rule.noOfElements - 1; i >= 0; i--) {
+                if(strcmp(rule.rightElements[i], "eps") == 0) 
+                {   
+                    //printf("%s\n",myStack->items[myStack->top]->lexeme);
+                    // pop(myStack);
+                    // free(topElement);
                     continue;
                 }
-
-                StackElement *newElement = createNewStackElement(rule.rightElements[i]);
+                
+                StackElement *newElement = createNewStackElement(rule.rightElements[i]);                
                 ParseTreeNode *treeNode = createNewParseTreeNode(rule.rightElements[i]);
 
-                newElement->nodePointer = treeNode;
+                newElement -> nodePointer = treeNode;
 
-                int originalChildren = currTreePointer->numChildren;
-                currTreePointer->children[originalChildren] = treeNode;
-                currTreePointer->numChildren++;
+                int originalChildren = currTreePointer -> numChildren;
+                currTreePointer -> children[originalChildren] = treeNode;
+                currTreePointer -> numChildren ++;
 
                 push(myStack, newElement);
             }
-        }
-        else
-        {
+        } 
+        else {
             /*error cases
             1. if both the top of the stack and token is a terminal is not equal to it
             */
-            success = 0;
-            break;
+           success = 0;
+           break;
         }
     }
 
-    if (!success)
-    {
-    }
-    else
-    {
+    if (!success ) {
+        return;
+    } else {
         printf("Input Source Code is syntactically correct ........\n");
         printf("The inorder traversal of the parse tree is as follows: \n");
         // printf("%s\n", root -> lexeme);
         printParseTree(root);
     }
 
-    // if stack is not empty pop it out
+    // if stack is not empty pop it out 
     free(myStack);
 }
 
@@ -861,7 +844,7 @@ void runLexerAndParser()
 {
     // Initialize File Pointer
     FILE *filePointer;
-    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t5.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t6.txt", "r");
 
     if (filePointer == NULL)
     {
@@ -934,7 +917,20 @@ void runLexerAndParser()
                 token[ind] = (char *)malloc(sizeof(char) * MAXTERM);
                 strcpy(token[ind], "ERROR");
                 value[ind] = (char *)malloc(sizeof(char) * MAXTERM);
-                strcpy(value[ind], "Identifier is too long");
+                
+                char *errMessage = (char *)malloc(sizeof(char) * MAXSIZE);
+
+                strcpy(errMessage, "Line ");
+                char str[5];
+                sprintf(str, "%d", lexerLineNumber + 1);
+                strcat(errMessage, str);
+
+                char str1[100] = " Error: Identifier is too long ";
+                strcat(errMessage, str1);
+
+
+
+                strcpy(value[ind], errMessage);
                 // printf("Line %d Error:  Identifier is too long\n", lexerLineNumber+1);
             }
         }
