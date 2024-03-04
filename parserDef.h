@@ -48,6 +48,8 @@ typedef struct ParseTreeNode
     struct ParseTreeNode *children[MAX_SIZE];
     int numChildren;
     int outIndex;
+    int nodeIndex;
+    int parentIndex;
 } ParseTreeNode;
 
 #endif

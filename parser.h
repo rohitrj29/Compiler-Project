@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include "parserDef.h"
 
-void printInOrder(ParseTreeNode *root);
+void printInorder(FILE *fp, ParseTreeNode *root);
+void printParseTree(ParseTreeNode *root, char *fileName);
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray);
 void populateTerminals();
 void populateFirstFromAnother(int ffIndex1, int ffIndex2);

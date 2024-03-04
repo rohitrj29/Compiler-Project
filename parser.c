@@ -10,6 +10,7 @@
 #include "lexer.h"
 
 int parserLineNumber = 0;
+int nodeIndexTracker = 1;
 
 // Arrays to store data
 GrammarRule grammarRule[MAXRULES];
@@ -26,15 +27,17 @@ int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
 ParseTreeNode *createNewParseTreeNode(char *lex)
 {
-    ParseTreeNode *treeElement = (ParseTreeNode *)malloc(sizeof(ParseTreeNode));
+    ParseTreeNode *treeElement = (ParseTreeNode *) malloc(sizeof(ParseTreeNode));
     treeElement->children[0] = NULL;
+    treeElement -> parentIndex = -1;
+    treeElement -> nodeIndex = nodeIndexTracker ++;
     strcpy(treeElement->lexeme, lex);
     treeElement->numChildren = 0;
     treeElement->outIndex = -1;
     return treeElement;
 }
 
-void printParseTree(ParseTreeNode *root)
+void printInorder(FILE *fp, ParseTreeNode *root)
 {
     if (root->lexeme == NULL)
     {
@@ -44,19 +47,42 @@ void printParseTree(ParseTreeNode *root)
     // Traverse each child node
     for (int i = root->numChildren - 1; i > 0; i--)
     {
-        printParseTree(root->children[i]);
+        printInorder(fp, root->children[i]);
     }
     if (root->outIndex >= 0)
     {
-        printf("Terminal : %s  Lexeme : %s Line No : %d \n", root->lexeme, value[root->outIndex], lineNo[root->outIndex]);
+        // Print information for the current node
+        fprintf(fp, "Terminal => Token: %s, Node Index: %d, Line No: %d, Lexeme: %s, Parent Index: %d, Is Leaf: %s\n",
+        root->lexeme,
+        root->nodeIndex,
+        lineNo[root->outIndex],
+        value[root->outIndex], // Replace with the actual value if number logic
+        root -> parentIndex,
+        (root->numChildren == 0) ? "Yes" : "No"); 
     }
     else
     {
-        printf("Non-Terminal : %s  \n", root->lexeme);
+        // Print information for the current node
+        fprintf(fp, "Non-Terminal => Token: %s, Node Index: %d, Line No: %d, Lexeme: %s, Parent Index: %d, Is Leaf: %s\n",
+        root->lexeme,
+        root->nodeIndex,
+        lineNo[root->outIndex],
+        "-----", // Replace with the actual value if number logic
+        root -> parentIndex,
+        (root->numChildren == 0) ? "Yes" : "No"); 
     }
 
     // value , line no, token
-    printParseTree(root->children[0]);
+    printInorder(fp, root->children[0]);
+}
+
+void printParseTree(ParseTreeNode *root, char *fileName) {
+    FILE *fp;
+    fp = fopen(fileName, "w");
+
+    printInorder(fp, root);
+
+    fclose(fp);
 }
 
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray)
@@ -615,8 +641,10 @@ void parseInputSourceCode() {
             strcpy(currtoken, token[ind ++]);
         } else if (tableValue >= 0) {
             GrammarRule rule = grammarRule[tableValue];
+            int par=topElement->nodePointer->nodeIndex;
             pop(myStack);
             free(topElement);
+            
             for (int i = rule.noOfElements - 1; i >= 0; i--) {
                 if(strcmp(rule.rightElements[i], "eps") == 0) 
                 {   
@@ -633,6 +661,7 @@ void parseInputSourceCode() {
 
                 int originalChildren = currTreePointer -> numChildren;
                 currTreePointer -> children[originalChildren] = treeNode;
+                treeNode -> parentIndex = par;
                 currTreePointer -> numChildren ++;
 
                 push(myStack, newElement);
@@ -653,7 +682,7 @@ void parseInputSourceCode() {
         printf("Input Source Code is syntactically correct ........\n");
         printf("The inorder traversal of the parse tree is as follows: \n");
         // printf("%s\n", root -> lexeme);
-        printParseTree(root);
+        printParseTree(root, "parseTree.txt");
     }
 
     // if stack is not empty pop it out 
@@ -844,7 +873,7 @@ void runLexerAndParser()
 {
     // Initialize File Pointer
     FILE *filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t6.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t3.txt", "r");
 
     if (filePointer == NULL)
     {
