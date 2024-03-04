@@ -1047,7 +1047,7 @@ void runLexerOnly(char *fileName)
     }
 
     printf("\n\nOnly Lexical analyzer module developed!\n\n");
-
+    lexerLineNumber=0;
     destroyHashMap(myMap);
     fclose(filePointer);
     return;

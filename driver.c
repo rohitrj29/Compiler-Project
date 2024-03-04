@@ -12,15 +12,17 @@ void initialPrint();
 int main(int argc, char *argv[])
 {
     initialPrint();
-
+    clock_t startTime;
+    clock_t endTime;
+   
     if (argc != 3)
     {
         printf("You have not entered the test case file name or the parseTreeOutput file name, please retry again!");
         exit(1);
     }
 
-    char *testcaseFileName = (char *) malloc(strlen(argv[1]) + 1);
-    char *parseTreeFileName = (char *) malloc(strlen(argv[2]) + 1);
+    char *testcaseFileName = (char *)malloc(strlen(argv[1]) + 1);
+    char *parseTreeFileName = (char *)malloc(strlen(argv[2]) + 1);
 
     strcpy(testcaseFileName, argv[1]);
     strcpy(parseTreeFileName, argv[2]);
@@ -41,38 +43,51 @@ int main(int argc, char *argv[])
         case 1:
         {
             // Remove comments from code and print comment free code
-            char *cleanFile = (char *) malloc(sizeof(char) * 50);
+            char *cleanFile = (char *)malloc(sizeof(char) * 50);
             strcpy(cleanFile, "cleanFile.txt");
             removeComments(testcaseFileName, cleanFile);
             break;
         }
 
-        case 2: {            
+        case 2:
+        {
             // Prints all tokens and lexemes line number wise, dont pass it to parser and with pretty printing
             // Each token appears in a new line along with the corresponding lexeme and line number
             runLexerOnly(testcaseFileName);
             break;
         }
 
-        case 3: {            
+        case 3:
+        {
             // Call lexical analyzer and pass it to parser and transfer the parse tree to specified file
             // Leftmost child ‐‐> parent node ‐‐> remaining siblings (excluding the leftmost)
-            runLexerAndParser(testcaseFileName, parseTreeFileName);
+           
+
+                runLexerAndParser(testcaseFileName, parseTreeFileName);
+
+            
+
             break;
         }
 
-        case 4: {            
+        case 4:
+        {
             // For printing (on the console) the total time taken by project code
             printf("Starting Execution....\n");
-            clock_t startTime = clock();
 
-            runLexerAndParser(testcaseFileName, parseTreeFileName);
+            
+            
+                startTime = clock();
 
-            clock_t endTime = clock();
-            double totalCPUTime = (double)(endTime - startTime);
-            double totalCPUTimeInSeconds = totalCPUTime / CLOCKS_PER_SEC;
+                runLexerAndParser(testcaseFileName, parseTreeFileName);
 
-            printf("Total CPU Time: %f , Total CPU Time in seconds: %f\n\n", totalCPUTime, totalCPUTimeInSeconds);
+                endTime = clock();
+                double totalCPUTime = (double)(endTime - startTime);
+                double totalCPUTimeInSeconds = totalCPUTime / CLOCKS_PER_SEC;
+
+                printf("Total CPU Time: %f , Total CPU Time in seconds: %f\n\n", totalCPUTime, totalCPUTimeInSeconds);
+            
+
             break;
         }
 
