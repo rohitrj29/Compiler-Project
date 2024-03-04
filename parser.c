@@ -782,7 +782,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t6.txt", "r");
+    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t5.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -880,5 +880,4 @@ void runLexerAndParser() {
 
 int main() {
     runLexerAndParser();
-    
 }

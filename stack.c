@@ -1,5 +1,9 @@
 #include "stack.h"
+#include "parseTreeStack.h"
+#include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 Stack* initializeStack(Stack *stack) {
     stack = (Stack *) malloc(sizeof(Stack));

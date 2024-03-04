@@ -3,7 +3,8 @@
   "files.associations": {
     "*.ejs": "html",
     "hash_table.h": "c",
-    "lexerdef.h": "c"
+    "lexerdef.h": "c",
+    "parsetreestack.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

@@ -1,6 +1,7 @@
 #ifndef PARSERDEF_H
 #define PARSERDEF_H
 
+#include <stdbool.h>
 
 #define MAX_SIZE 250
 #define MAXELE 20
@@ -47,15 +48,5 @@ typedef struct ParseTreeNode {
     int numChildren;
     int outIndex;
 } ParseTreeNode;
-
-typedef struct {
-    char lexeme[MAXTERM];
-    ParseTreeNode *nodePointer;
-} StackElement;
-
-typedef struct {
-    StackElement *items[MAX_SIZE];
-    int top;
-} Stack;
 
 #endif

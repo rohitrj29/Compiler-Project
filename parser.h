@@ -4,18 +4,6 @@
 #include <stdbool.h>
 #include "parserDef.h"
 
-Stack* initializeStack(Stack *stack);
-int isEmpty(Stack *stack);
-int isFull(Stack *stack);
-void push(Stack *stack, StackElement *str);
-StackElement* pop(Stack *stack);
-StackElement* peek(Stack *stack);
-void freeStack(Stack *stack);
-
-StackElement *createNewStackElement (char lexeme[MAXTERM]);
-ParseTreeNode* createNewParseTreeNode(char *lex);
-
-void freeStack(Stack *stack);
 void printInOrder(ParseTreeNode *root);
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray);
 void populateTerminals();
