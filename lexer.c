@@ -1,7 +1,7 @@
 //#include "structures.h"
 //#include "lexer.h"
 #define bufferSize 4
-#define maxVarSize 60
+#define maxVarSize 21
 #define SIZE 10000
 #include<stdio.h>
 #include<stdlib.h>
@@ -240,7 +240,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     state = 5;
                     twinBuffer -> forward ++;
                 } else {
-                    lineNumber ++;
+                    //lineNumber ++;
                     state = 0;
                 }
 
@@ -894,7 +894,7 @@ void destroyHashMap(HashMap *map) {
 int main() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t5.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t1(1).txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -916,7 +916,7 @@ int main() {
         tkinfo=getNextToken(twinBuffer,filePointer);
         if(tkinfo->tkId==NULL)
         {
-            // printf("%s\n","error");
+            printf("Line no. %d  Lexical Error\n",lineNumber+1);
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
@@ -928,10 +928,11 @@ int main() {
             if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                 insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
                 
-            }
-            printf("%s ", getValue(myMap,tkinfo->value));
-            //printf("%s ",tkinfo->tkId);
-            //printf("%s \n",tkinfo->value);
+            } 
+            
+            printf("Line No. %d Lexeme %s  Token %s \n", lineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+            // printf("%s ",tkinfo->tkId);
+            // printf("%s \n",tkinfo->value);
         }
         
     }
