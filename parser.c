@@ -14,9 +14,13 @@ int nodeIndexTracker = 1;
 
 // Arrays to store data
 GrammarRule grammarRule[MAXRULES];
+//maps non terminal to its index in grammarRule and firstFollow
 NTLookupEntry NTLookup[MAXNONTERM];
+//stores first and follow sets of non terminals
 FirstFollow firstFollow[MAXNONTERM];
+//stores terminals
 char terminals[PARSECOL][MAXTERM];
+//stores the parse table
 int parseTable[55][PARSECOL];
 
 char **token;
@@ -25,6 +29,7 @@ int *lineNo;
 
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
+// Function to create a new parse tree node
 ParseTreeNode *createNewParseTreeNode(char *lex)
 {
     ParseTreeNode *treeElement = (ParseTreeNode *) malloc(sizeof(ParseTreeNode));
@@ -37,6 +42,8 @@ ParseTreeNode *createNewParseTreeNode(char *lex)
     return treeElement;
 }
 
+
+// Function to print the parse tree in inorder traversal
 void printInorder(FILE *fp, ParseTreeNode *root)
 {
     if (root->lexeme == NULL)
@@ -76,6 +83,7 @@ void printInorder(FILE *fp, ParseTreeNode *root)
     printInorder(fp, root->children[0]);
 }
 
+// Function to print the parse tree in inorder traversal
 void printParseTree(ParseTreeNode *root, char *fileName) {
     FILE *fp;
     fp = fopen(fileName, "w");
@@ -85,6 +93,7 @@ void printParseTree(ParseTreeNode *root, char *fileName) {
     fclose(fp);
 }
 
+// Function to check if an element is present in an array
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray)
 {
     for (int i = 0; i < noOfEleInArray; i++)
@@ -96,6 +105,7 @@ bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInAr
     return false;
 }
 
+// Function to populate the terminals array
 void populateTerminals()
 {
     int index = 1;
@@ -113,6 +123,7 @@ void populateTerminals()
     }
 }
 
+// Function to populate the first set of a non-terminal from another non-terminal
 void populateFirstFromAnother(int ffIndex1, int ffIndex2)
 {
     int initialElementsInFirst = firstFollow[ffIndex1].noOfFirst, intialElementsInFF2 = firstFollow[ffIndex2].noOfFirst;
@@ -132,6 +143,7 @@ void populateFirstFromAnother(int ffIndex1, int ffIndex2)
     }
 }
 
+// Function to populate the first set of a non-terminal from a single element say epsilon or terminal
 void populateFirstFromSingleElement(int ffIndex, char _element[MAXTERM])
 {
     int initialElementsInFirst = firstFollow[ffIndex].noOfFirst;
@@ -147,6 +159,7 @@ void populateFirstFromSingleElement(int ffIndex, char _element[MAXTERM])
     }
 }
 
+// Function to populate the follow set of a non-terminal from first set of another non-terminal
 void populateFollowFromFirst(int ffIndex1, int ffIndex2)
 {
     int initialElementsInFollow = firstFollow[ffIndex1].noOfFollow, intialElementsInFirst = firstFollow[ffIndex2].noOfFirst;
@@ -166,6 +179,7 @@ void populateFollowFromFirst(int ffIndex1, int ffIndex2)
     }
 }
 
+// Function to populate the follow set of a non-terminal from follow set of another non-terminal
 void populateFollowFromFollow(int ffIndex1, int ffIndex2)
 {
     int initialElementsInFollow1 = firstFollow[ffIndex1].noOfFollow, intialElementsInFollow2 = firstFollow[ffIndex2].noOfFollow;
@@ -185,6 +199,8 @@ void populateFollowFromFollow(int ffIndex1, int ffIndex2)
     }
 }
 
+
+// Function to populate the follow set of a non-terminal from a single element say epsilon or terminal
 void populateFollowFromElement(int ffIndex, char _element[MAXTERM])
 {
     int initialElementsInFollow = firstFollow[ffIndex].noOfFollow;
@@ -201,12 +217,11 @@ void populateFollowFromElement(int ffIndex, char _element[MAXTERM])
 }
 
 // Function to initialize first and follow sets and NT lookup
-// Function to initialize first and follow sets and NT lookup
 void intialiseFFandLookup()
 {
     int entry = 0;
     char prev[MAXTERM] = "";
-
+    // Loop through the grammar rules
     for (int i = 0; i < parserLineNumber; i++)
     {
         char nonterm[MAXTERM];
@@ -241,6 +256,8 @@ void intialiseFFandLookup()
     noOfNonTerminals = entry;
 }
 
+
+// Function to get the NTLookup entry for a non-terminal
 NTLookupEntry getNTLookup(char *nonTerminal)
 {
     for (int i = 0; i < noOfNonTerminals; i++)
@@ -258,6 +275,7 @@ NTLookupEntry getNTLookup(char *nonTerminal)
     return defaultEntry;
 }
 
+// Function to find the first set of a non-terminal
 void findFirst(int ffind, int grammarInd)
 {
 
@@ -271,9 +289,9 @@ void findFirst(int ffind, int grammarInd)
         int j = grammarRule[i].noOfElements;
         for (int k = 0; k < j; k++)
         {
-
-            // TODO: if the first is already calculated
-            // copy all first elements to the current non terminal
+            
+            // TODO: if the first is already calculated - Done
+            // copy all first elements to the current non terminal- Done
 
             // if the element is a terminal
             if ((grammarRule[i].rightElements[k][0] == 'T') || strcmp(grammarRule[i].rightElements[k], "eps") == 0)
@@ -328,6 +346,7 @@ void findFirst(int ffind, int grammarInd)
     return;
 }
 
+// Function to find the follow set of a non-terminal
 void findFollow(int ffIndex)
 {
     for (int i = 0; i < parserLineNumber; i++)
@@ -385,15 +404,6 @@ void findFollow(int ffIndex)
                         if (firstFollow[check.ffIndex].isEpsilon)
                         {
 
-                            // if(firstFollow[check.ffIndex].followCalc==true){
-                            //     //popoulate follow set with first set of right element
-                            //     populateFollowFromFirst(ffIndex, check.ffIndex);
-                            //     //populate follow set with follow set of right element
-                            //     populateFollowFromFollow(ffIndex, check.ffIndex);
-                            //     found=0;
-                            // }
-                            // else
-                            // {
 
                             if (j + 1 == grammarRule[i].noOfElements - 1)
                             {
@@ -452,6 +462,7 @@ int getTerminalIndex(char *terminal)
     return -1;
 }
 
+// check if the element is terminal
 bool isTerminal(char *element)
 {
     if ((element[0] == 'T') || element[0] == '$')
@@ -461,6 +472,7 @@ bool isTerminal(char *element)
     return false;
 }
 
+// fill sync in parse table
 void fillSyncInParseTable()
 {
     for (int i = 0; i < noOfNonTerminals; i++)
@@ -483,24 +495,30 @@ void fillSyncInParseTable()
     }
 }
 
+// create parse table
 void createParseTable()
 {
     memset(parseTable, -1, sizeof(parseTable));
 
     for (int gindex = 0; gindex < TOTALRULES; gindex++)
-    {
+    {   
+        // get the index of the non terminal
         NTLookupEntry entry = getNTLookup(grammarRule[gindex].leftElement);
         int ntindex = entry.ffIndex;
         FirstFollow ff = firstFollow[ntindex];
         GrammarRule rule = grammarRule[gindex];
         // ntindex=10
         // only right[0] needs to be checked
+
+        //flag is to check if we have to move to the next right element 
         int flag = 1;
+
         for (int rhsIndex = 0; flag == 1 && rhsIndex < rule.noOfElements; rhsIndex++)
         {
             flag = 0;
             char element[MAXTERM];
             strcpy(element, rule.rightElements[rhsIndex]);
+            // if the element is epsilon
             if (strcmp(element, "eps") == 0)
             {
                 for (int findex = 0; findex < ff.noOfFollow; findex++)
@@ -517,6 +535,7 @@ void createParseTable()
             }
             else if (isTerminal(element))
             {
+                // variable is terminal
                 int terminalIndex = getTerminalIndex(element);
                 if (terminalIndex == 56)
                 {
@@ -528,11 +547,13 @@ void createParseTable()
             {
                 // variable is non-terminal
                 int nonTerminalIndex = getNTLookup(element).ffIndex;
+                //loop the first set of the non terminal
                 for (int findex = 0; findex < firstFollow[nonTerminalIndex].noOfFirst; findex++)
                 {
 
                     char firstElement[MAXTERM];
                     strcpy(firstElement, firstFollow[nonTerminalIndex].firstSet[findex]);
+                    //if the first contains epsilon
                     if (strcmp(firstElement, "eps") == 0)
                     {
                         // first of next element until not eps is matched
@@ -564,9 +585,11 @@ void createParseTable()
             }
         }
     }
+    //populate the sync set in the parse table
     fillSyncInParseTable();
 }
 
+// Function to parse the output returned by the lexer
 void parseInputSourceCode(char *parseTreeFileName) {
     Stack *myStack;
     myStack = initializeStack(myStack);
@@ -577,10 +600,12 @@ void parseInputSourceCode(char *parseTreeFileName) {
     ParseTreeNode *root = createNewParseTreeNode(grammarRule[0].leftElement);
     root->outIndex = -1;
     StackElement *dollar = createNewStackElement("$");
+    // push the dollar sign to the stack to indicate the end
     push(myStack, dollar);
 
     StackElement *startSymbolEle = createNewStackElement(grammarRule[0].leftElement);
     startSymbolEle->nodePointer = root;
+    //push the start symbol to the stack
     push(myStack, startSymbolEle);
 
     int success = 1;
@@ -614,9 +639,11 @@ void parseInputSourceCode(char *parseTreeFileName) {
         ParseTreeNode *currTreePointer = topElement->nodePointer;
 
         int tableValue = -3;
+        //if the entry is valid get the value from the parse table
         if (topElementIndex >= 0)
             tableValue = parseTable[topElementIndex][tokenIndex];
 
+        //if the top of the stack is a terminal and the token matches the top of the stack
         if (isTerminal(currtoken) && isTerminal(topElement->lexeme) && strcmp(currtoken, topElement->lexeme) == 0)
         {
             topElement->nodePointer->outIndex = ind - 1;
@@ -625,11 +652,13 @@ void parseInputSourceCode(char *parseTreeFileName) {
             free(topElement);
         }
         else if (topElement->lexeme[0] == '$')
-        {
+        { 
+            //if the top of the stack is a dollar sign 
             break;
         }
         else if (topElementIndex == -1)
-        {
+        {   
+            //if the top of the stack is a terminal and the token doesn't match the top of the stack
             success = 0;
             printf("Line %d Error: The token is %s for lexeme %s doesn't match the expected token %s \n", lineNo[ind - 1], currtoken, value[ind - 1], topElement->lexeme);
             // strcpy(currtoken, token[ind ++]);
@@ -638,6 +667,7 @@ void parseInputSourceCode(char *parseTreeFileName) {
         }
         else if (tableValue == -2)
         {
+            //sync encountered
             success = 0;
             if (strlen(topElement->lexeme) > 2 && topElement->lexeme[0] == 'T' && topElement->lexeme[1] == 'K')
                 printf("Line  Invalid token %s encountered on the stack top %s \n", topElement->lexeme);
@@ -646,6 +676,7 @@ void parseInputSourceCode(char *parseTreeFileName) {
         }
         else if (tableValue == -1)
         {
+            //error encountered
             success = 0;
             printf("Line %d Error: token skipped %s with value %s  \n", lineNo[ind - 1], currtoken, value[ind - 1]);
 
@@ -653,11 +684,13 @@ void parseInputSourceCode(char *parseTreeFileName) {
         }
         else if (tableValue >= 0)
         {
+            //if the top of the stack is a non terminal 
             GrammarRule rule = grammarRule[tableValue];
             int par=topElement->nodePointer->nodeIndex;
             pop(myStack);
             free(topElement);
             
+            //push the rules from left to right to the stack
             for (int i = rule.noOfElements - 1; i >= 0; i--) {
                 if(strcmp(rule.rightElements[i], "eps") == 0) 
                 {   
@@ -690,10 +723,12 @@ void parseInputSourceCode(char *parseTreeFileName) {
         }
     }
 
+    //if error dont print the parse tree
     if (!success)
     {
         return;
     } else {
+        //if no error print the parse tree
         printf("Both lexical and syntax analysis modules implemented!\n"); 
         printf("Input Source Code is syntactically correct ........\n");
 
@@ -719,6 +754,7 @@ void printTerminals()
     }
 }
 
+// Function to print the first and follow sets
 void printFirstFollow()
 {
     for (int i = 0; i < noOfNonTerminals; i++)
@@ -751,6 +787,8 @@ void printGrammarRules()
         printf("\n");
     }
 }
+
+// Function to print the parse table
 void printParseTable()
 {
     printf("Parse Table\n");
@@ -782,28 +820,6 @@ void printParseTable()
     }
 }
 
-// char **populateInputStream() {
-//     FILE *fp;
-//     fp = fopen("./parseTreeCustomInput.txt", "r");
-
-//     char line[LINESIZE], **input;
-//     input = (char **) malloc (sizeof(char *) * LINESIZE);
-//     int i = 0;
-
-//     while (fgets(line, LINESIZE, fp) != NULL) {
-//         char *token = strtok(line, " ");
-
-//         while (token != NULL) {
-//             input[i] = (char *) malloc (sizeof(char) * MAXTERM);
-//             strcpy(input[i ++], token);
-
-//             token = strtok(NULL, " ");
-//         }
-//     }
-
-//     fclose(fp);
-//     return input;
-// }
 
 void computeFirstAndFollowSets()
 {
@@ -827,10 +843,11 @@ void computeFirstAndFollowSets()
     }
 }
 
+// Function to start parsing
 void startParsing()
 {
     FILE *fp;
-    fp = fopen("./FinalGrammar.txt", "r");
+    fp = fopen("./grammar.txt", "r");
 
     if (fp == NULL)
     {
@@ -888,6 +905,7 @@ void startParsing()
     return;
 }
 
+// Function to run the lexer and parser
 void runLexerAndParser(char *fileName, char *parseTreeFileName)
 {
     // Initialize File Pointer
@@ -992,6 +1010,7 @@ void runLexerAndParser(char *fileName, char *parseTreeFileName)
 
 
     parseInputSourceCode(parseTreeFileName);
+    // Free the memory and set all global variables to 0
     lexerLineNumber=0;
     parserLineNumber=0;
     free(token);
