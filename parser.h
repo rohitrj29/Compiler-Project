@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "parserDef.h"
 
+void runLexerAndParser(char *fileName, char *parseTreeFileName);
+void parseInputSourceCode(char *parseTreeFileName);
 void printInorder(FILE *fp, ParseTreeNode *root);
 void printParseTree(ParseTreeNode *root, char *fileName);
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray);

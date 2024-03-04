@@ -11,6 +11,56 @@ int lexerLineNumber = 0;
 int lenflag = 0;
 int idlen = 0;
 
+char *trim_whitespace(char *str)
+{
+
+    while (*str == ' ' || *str == '\t')
+    {
+        str++;
+    }
+    return str;
+}
+
+void removeComments(const char *testcaseFile, const char *cleanFile)
+{
+    FILE *input_file, *output_file;
+    char line[256];
+    input_file = fopen(testcaseFile, "r");
+    if (input_file == NULL)
+    {
+        perror("Error opening input file");
+        return;
+    }
+
+    output_file = fopen(cleanFile, "w");
+    if (output_file == NULL)
+    {
+        perror("Error opening output file");
+        fclose(input_file);
+        return;
+    }
+
+    while (fgets(line, sizeof(line), input_file))
+    {
+        char *trimmed_line = trim_whitespace(line);
+
+        char *comment_ptr = strchr(trimmed_line, '%');
+
+        if (comment_ptr != NULL)
+        {
+            *comment_ptr = '\0';
+        }
+
+        fputs(trimmed_line, output_file);
+        printf("%s", trimmed_line);
+    }
+
+    fclose(input_file);
+    fclose(output_file);
+
+    printf("\nComments Removal Compeleted! and saved to %s\n\n", cleanFile);
+}
+
 FILE *getStream(FILE *filePointer, TwinBuffer *twinBuffer)
 {
 
@@ -941,11 +991,11 @@ TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
     }
 }
 
-void runLexerOnly()
+void runLexerOnly(char *fileName)
 {
     // Initialize File Pointer
     FILE *filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t2.txt", "r");
+    filePointer = fopen(fileName, "r");
 
     if (filePointer == NULL)
     {
@@ -988,8 +1038,6 @@ void runLexerOnly()
                 }
 
                 printf("Line %d Lexeme: %s Token %s \n", lexerLineNumber + 1, tkinfo->value, getValue(myMap, tkinfo->value));
-                // printf("%s ",tkinfo->tkId);
-                // printf("%s \n",tkinfo->value);
             }
             else
             {
@@ -998,7 +1046,7 @@ void runLexerOnly()
         }
     }
 
-    printf("Only Lexical analyzer module developed!\n");
+    printf("\n\nOnly Lexical analyzer module developed!\n\n");
 
     destroyHashMap(myMap);
     fclose(filePointer);

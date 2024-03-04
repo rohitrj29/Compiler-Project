@@ -13,4 +13,5 @@ FILE *getStream(FILE *filePointer, TwinBuffer *twinBuffer);
 int fromZeroToWhere(char currentCharacter);
 TokenInfo *returnToken(TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber);
 TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer);
-void runLexerOnly();
+void runLexerOnly(char *fileName);
+void removeComments(const char *testcaseFile, const char *cleanFile);

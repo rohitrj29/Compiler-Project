@@ -567,7 +567,7 @@ void createParseTable()
     fillSyncInParseTable();
 }
 
-void parseInputSourceCode() {
+void parseInputSourceCode(char *parseTreeFileName) {
     Stack *myStack;
     myStack = initializeStack(myStack);
     int ind = 0;
@@ -679,10 +679,12 @@ void parseInputSourceCode() {
     if (!success ) {
         return;
     } else {
+        printf("Both lexical and syntax analysis modules implemented!\n"); 
         printf("Input Source Code is syntactically correct ........\n");
-        printf("The inorder traversal of the parse tree is as follows: \n");
-        // printf("%s\n", root -> lexeme);
-        printParseTree(root, "parseTree.txt");
+
+        printParseTree(root, parseTreeFileName);
+        
+        printf("Parse Tree was constructed and the inorder traversal of the parse tree is saved in the file name provided! \n\n");
     }
 
     // if stack is not empty pop it out 
@@ -861,19 +863,21 @@ void startParsing()
     populateTerminals();
 
     computeFirstAndFollowSets();
-    createParseTable();
 
-    //  printParseTable();
-    // printFirstFollow();
+    printf("FIRST and FOLLOW set automated\n");
+
+    createParseTable();
+    
+    printf("Parse Table Created!\n");
 
     return;
 }
 
-void runLexerAndParser()
+void runLexerAndParser(char *fileName, char *parseTreeFileName)
 {
     // Initialize File Pointer
     FILE *filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\testcase1.txt", "r");
+    filePointer = fopen(fileName, "r");
 
     if (filePointer == NULL)
     {
@@ -973,7 +977,7 @@ void runLexerAndParser()
         }
     }
 
-    parseInputSourceCode();
+    parseInputSourceCode(parseTreeFileName);
 
     free(token);
     free(value);
@@ -981,9 +985,4 @@ void runLexerAndParser()
     destroyHashMap(myMap);
     fclose(filePointer);
     return;
-}
-
-int main()
-{
-    runLexerAndParser();
 }
