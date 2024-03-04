@@ -21,6 +21,7 @@ char *trim_whitespace(char *str)
     return str;
 }
 
+// Function to remove comments from input file and also print the comment-free code to console
 void removeComments(const char *testcaseFile, const char *cleanFile)
 {
     FILE *input_file, *output_file;
@@ -61,6 +62,8 @@ void removeComments(const char *testcaseFile, const char *cleanFile)
     printf("\nComments Removal Compeleted! and saved to %s\n\n", cleanFile);
 }
 
+// Function to read input from input file and allocate the read bytes
+// to the corresponding buffer
 FILE *getStream(FILE *filePointer, TwinBuffer *twinBuffer)
 {
 
@@ -109,6 +112,8 @@ FILE *getStream(FILE *filePointer, TwinBuffer *twinBuffer)
     return filePointer;
 }
 
+// Function that uses currentCharacter to determine which next state to go to after
+// the first state (Zero)
 int fromZeroToWhere(char currentCharacter)
 {
 
@@ -182,6 +187,7 @@ int fromZeroToWhere(char currentCharacter)
     return 63;
 }
 
+// Function to ease returning a TokenInfo object
 TokenInfo *returnToken(TokenInfo *tokenInfo, char *value, char *tokenID, int lexerLineNumber)
 {
     tokenInfo->value = value;
@@ -191,6 +197,7 @@ TokenInfo *returnToken(TokenInfo *tokenInfo, char *value, char *tokenID, int lex
     return tokenInfo;
 }
 
+// Helper function to populate error message
 void generateErrorMessage(char **errorMessage, int lexerLineNumber, char *temp)
 {
     *errorMessage = (char *)malloc(sizeof(char) * MAXSIZE);
@@ -209,6 +216,8 @@ void generateErrorMessage(char **errorMessage, int lexerLineNumber, char *temp)
     return;
 }
 
+// Function which returns the next token from the twinBuffer
+// This code is written as per the DFA created by us
 TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
 {
 
@@ -216,9 +225,7 @@ TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
     int state = 0;
     char *temp = malloc(sizeof(maxVarSize));
     int tempIndex = 0;
-    // TODO: Check max possible size & check if buffer se badha ho .......
-    // TODO: Line Number
-    // todo: malloc temp here
+
     TokenInfo *tokenInfo = (TokenInfo *)malloc(sizeof(TokenInfo));
 
     while (1)
@@ -235,6 +242,9 @@ TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
             currentBuffer = twinBuffer->buffer1;
         }
         char currentCharacter = currentBuffer[twinBuffer->forward];
+
+        // Switch case to create the DFA like flow in our code
+        // Switch case is implemented on the states of our DFA
 
         switch (state)
         {
@@ -991,6 +1001,7 @@ TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
     }
 }
 
+// Function to run the Lexical Module only
 void runLexerOnly(char *fileName)
 {
     // Initialize File Pointer
@@ -1011,6 +1022,7 @@ void runLexerOnly(char *fileName)
 
     // create new hashtable and initialise with keywords
     HashMap *myMap = initializeHashMap();
+    
     // Call function to get buffer
     filePointer = getStream(filePointer, twinBuffer);
     TokenInfo *tkinfo;

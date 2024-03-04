@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+// Function to initialize Stack
 Stack *initializeStack(Stack *stack)
 {
     stack = (Stack *)malloc(sizeof(Stack));
@@ -12,11 +13,13 @@ Stack *initializeStack(Stack *stack)
     return stack;
 }
 
+// Function to check if stack is empty
 int isEmpty(Stack *stack)
 {
     return (stack->top == -1);
 }
 
+// Function to check if stack is full or not
 int isFull(Stack *stack)
 {
     return (stack->top == MAX_SIZE - 1);
@@ -45,6 +48,7 @@ StackElement *pop(Stack *stack)
     return stack->items[stack->top--];
 }
 
+// Function to see top element of stack
 StackElement *peek(Stack *stack)
 {
     if (isEmpty(stack))
@@ -65,6 +69,7 @@ StackElement *createNewStackElement(char lexeme[MAXTERM])
     return stackElement;
 }
 
+// Functio to de-allocate memory
 void freeStack(Stack *stack)
 {
     while (!isEmpty(stack))
