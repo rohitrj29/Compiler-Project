@@ -115,19 +115,20 @@ TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int le
     return tokenInfo;
 }
 
-void generateErrorMessage(char *errorMessage, int lexerLineNumber, char *temp) {  
-    errorMessage = (char *) malloc(sizeof(char) * MAXSIZE);
-    strcpy(errorMessage, "Line ");
-    char str[5];  
+void generateErrorMessage(char **errorMessage, int lexerLineNumber, char *temp) {
+    *errorMessage = (char *) malloc(sizeof(char) * MAXSIZE);
+
+    strcpy(*errorMessage, "Line ");
+    char str[5];
     sprintf(str, "%d", lexerLineNumber + 1);
-    strcat(errorMessage, str);
+    strcat(*errorMessage, str);
 
-    char str1[100] = " Error:  Unknown Pattern: <";
-    strcat(errorMessage, str1);
-    strcat(errorMessage, temp);
-    strcat(errorMessage, ">");
+    char str1[100] = " Error: Unknown Pattern: <";
+    strcat(*errorMessage, str1);
+    strcat(*errorMessage, temp);
+    strcat(*errorMessage, ">");
 
-    printf("%s\n", errorMessage);
+    printf("%s\n", *errorMessage);
 }
 
 TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
@@ -328,7 +329,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer -> lexBegin = twinBuffer -> forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     
                     return returnToken(tokenInfo, errorMessage, NULL, lexerLineNumber);
                     break;
@@ -370,7 +371,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 twinBuffer->lexBegin=twinBuffer->forward;
 
                 char *errorMessage;
-                generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                generateErrorMessage(&errorMessage, lexerLineNumber, temp);
 
                 return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                 break;
@@ -390,7 +391,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
             }
@@ -419,7 +420,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
@@ -490,7 +491,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
@@ -615,7 +616,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                     
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
@@ -639,7 +640,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
@@ -654,7 +655,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
@@ -673,7 +674,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo,errorMessage,NULL,lexerLineNumber);
                     break;
                 }
@@ -692,7 +693,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
@@ -710,7 +711,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
@@ -773,7 +774,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
@@ -809,7 +810,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 //twinBuffer->forward++;
                 twinBuffer->lexBegin=twinBuffer->forward;
                 char *errorMessage;
-                generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                 return returnToken(tokenInfo, errorMessage ,NULL,lexerLineNumber);
                 break;
 
