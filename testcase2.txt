@@ -1,0 +1,173 @@
+%Test Case 2: Syntactically correct test case
+% Large Test Case Sample 2
+
+
+
+%Following function computes the sum of user defined real numbers
+%The variable d3 maintains the sum of values
+_sumN  input parameter list [int d5cc34]  
+output parameter list[real d3];
+	type int : b5b567;
+	b5b567 <--- 1;
+	d3 <--- 0.00;
+	while ( b5b567 <= d5cc34)
+		read( c3bd);
+		d3 <--- d3 + c3bd;
+		b5b567 <--- b5b567 + 1;
+	endwhile
+	return [d3];
+end
+
+%Test Case 3: Syntactically correct testcase
+%Following program computes the average marks obtained by students in three subjects
+
+%Following function reads marks of a student in all subjects and returns as a record variable
+% Note that the variable b7 is not used anywhere but it is the syntactic requirement to have 
+% atleast one input parameter
+_readMarks input parameter list[int b7]
+output parameter list [ record #marks b3c45];
+	read(b3c45.maths);
+	read(b3c45.physics);
+	read(b3c45.chemistry);
+	return [b3c45];
+end
+% Notice here that  your compiler recognizes the type definition of marks even before it is 
+% declared. This will be handled at the semantic analyzer phase.
+
+
+
+
+
+%Test Case 4: Syntactically correct testcase
+%Following program computes an arithmetic expression 
+
+% The following function computes the function value for the given inputs
+
+_computeFunctionValue input parameter list[int c3, int c4, int c5]
+output parameter list [real c6];
+	type real : d4cbcd5677;
+	type real : c4bbb;
+	c6 <--- 5000.79;
+	d4cbcd5677<--- ((c3 + 2*c4)-(c5-5))/ 4;
+	c4bbb <--- ((d4cbcd5677- 2.35)*(2345-234*8))+5*c3;
+	if((~(c4bbb == 0)) &&& (c4bbb > 78.56))
+	then
+		c6<--- d4cbcd5677/c4bbb;
+	else
+		write(c4bbb);
+	endif
+
+	return [c6];
+end
+
+
+%The following program computes the function value for the user defined input
+
+%Test Case 5: The following source code is expected to be syntactically correct as per the modified grammar.
+%If any line has syntax error, please inform me as that error needs to be fixed in this test case.
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+	record #two
+		type #point: beginpoint;
+		type #point: endpoint;
+	endrecord
+
+
+	type record #two : b5b567;
+	type record #one : b3;
+	type #point: d5;
+	b5b567 <--- c6*2;
+	b3 <--- c6-c3;
+	while ( b5b567 <= d5cc34)
+		read(c3bd);
+		d3 <--- d3 + c3bd;
+		b5b567 <--- b5b567 + 1;
+	endwhile
+	return [d3];
+end
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+	record #two
+		type #point: beginpoint;
+		type #point: endpoint;
+	endrecord
+
+
+	type record #two : b5b567;
+	type record #one : b3;
+	type #point: d5;
+	b5b567 <--- c6*2;
+	b3 <--- c6-c3;
+	while ( b5b567 <= d5cc34)
+		read(c3bd);
+		d3 <--- d3 + c3bd;
+		b5b567 <--- b5b567 + 1;
+	endwhile
+	return [d3];
+end
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+	record #two
+		type #point: beginpoint;
+		type #point: endpoint;
+	endrecord
+
+
+	type record #two : b5b567;
+	type record #one : b3;
+	type #point: d5;
+	b5b567 <--- c6*2;
+	b3 <--- c6-c3;
+	while ( b5b567 <= d5cc34)
+		read(c3bd);
+		d3 <--- d3 + c3bd;
+		b5b567 <--- b5b567 + 1;
+	endwhile
+	return [d3];
+end
+
+% type checking will be required in stage 2. Despite some type errors, undeclared variables etc the code is syntactically correct
+%in this function.
+
+%The following program computes the average of marks of total d5cb34567  students
+_main 
+	record #one
+		type real:x;
+		type real:y;
+	endrecord	
+	definetype record #one as #point
+	definetype record #two as #line
+	union #four
+		type #line : ln; 
+		type #point: pt; 
+		type #traingle:tr;
+	endunion
+        definetype record #three as #triangle  
+	record #three 
+		type #line: base;
+		type #line: height;
+	endrecord
+	definetype union #four as #shape
+	record #variantrecord
+		type int: tag;
+		type #shape: s;
+	endrecord
+
+	type record #variantrecord : d4;
+	type int : b5;
+	type int : d5cb34567;
+	type record #variantrecord: b5c6;
+	b5c6 <--- b5c6.tag + d4.s.ln.beginpoint.x - b5c6.s.tr.base.beginpoint.y; 
+	b5 <--- b5 +1;
+	d4 <--- b5c6 / d5cb34567;
+	write(d4);
+	write(d4.s.ln.beginpoint.x );
+	write(b5c6.tag );
+	return;
+end

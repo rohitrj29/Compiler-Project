@@ -1,9 +1,0 @@
-dataType primitiveDataType
-dataType constructedDataType
-primitiveDataType TK_INT
-primitiveDataType TK_REAL
-constructedDataType TK_RECORD TK_RUID
-constructedDataType TK_UNION TK_RUID
-constructedDataType TK_RUID
-fieldType primitiveDataType
-fieldType constructedDatatype
