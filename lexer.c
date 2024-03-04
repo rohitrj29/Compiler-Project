@@ -43,6 +43,8 @@ typedef struct {
 
 
 int lineNumber = 0;
+int lenflag = 0;
+int idlen = 0;
 
 FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer) {
 
@@ -96,7 +98,11 @@ int fromZeroToWhere(char currentCharacter) {
         return 0;
     } 
     
-    if(currentCharacter>='b'&& currentCharacter<='d') return 1;
+    if(currentCharacter>='b'&& currentCharacter<='d')
+    {
+        idlen++;
+        return 1;
+    }
     if((currentCharacter>='e' && currentCharacter<='z') || currentCharacter=='a') return 6;
     if(currentCharacter>='0' && currentCharacter<='9') return 8;
     if (currentCharacter == '_') return 19;
@@ -179,9 +185,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
 
             case 1:                
                 if (currentCharacter - '0' >= 2 && currentCharacter - '0' <= 7) {
-                    state = 2;                    
+                    state = 2; 
+                    idlen++;                   
                 } else if (currentCharacter >= 'a' && currentCharacter <= 'z') {
                     state = 6;
+                    idlen++;
                 } else {                    
                     // Retract 1
                     //twinBuffer -> forward --;
@@ -200,11 +208,29 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 2: 
                 if (currentCharacter >= 'b' && currentCharacter <= 'd') {
                     // Do Nothing
+                    idlen++;
+                    if(lenflag == 0 && idlen > 20)
+                    {
+                        lenflag = 1;
+                       // printf("LENGTH ERROR!");   
+                    }
                 } else if (currentCharacter - '0' >= 2 && currentCharacter - '0' <= 7) {
                     state = 3;
+                    idlen++;
+                    if(lenflag == 0 && idlen > 20)
+                    {
+                        lenflag = 1;
+                     //   printf("LENGTH ERROR!");   
+                    }
+
                 } else {
                     // Retract 1                    
                     //twinBuffer -> forward --;
+                    if(lenflag == 1)
+                    {
+                        printf("");
+                        return;
+                    }
                     char *tk_id = "TK_ID";
                     twinBuffer->lexBegin = twinBuffer->forward;
                     temp[tempIndex]='\0';
@@ -220,6 +246,12 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 3: 
                 if (currentCharacter - '0' >= 2 && currentCharacter - '0' <= 7)  {
                     // Do Nothing
+                    idlen++;
+                    if(lenflag == 0 && idlen > 20)
+                    {
+                        lenflag = 1;
+                      //  printf("LENGTH ERROR!");   
+                    }
                 } else {
                     // Retract 1                    
                     // twinBuffer -> forward --;
@@ -249,9 +281,20 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 6: 
                 if (currentCharacter >= 'a' && currentCharacter <= 'z') {
                     // Do Nothing
+                    idlen++;
+                    if(lenflag == 0 && idlen > 20)
+                    {
+                        lenflag = 1;
+                       // printf("LENGTH ERROR!");   
+                    }
                 } else {                    
                     // Retract 1                    
                     //twinBuffer -> forward --;
+                    if(lenflag == 1)
+                    {
+                        printf("");
+                        return;
+                    }
                     char *tk_id = "TK_FIELDID";
                     twinBuffer -> lexBegin = twinBuffer -> forward;
                     temp[tempIndex]='\0';
