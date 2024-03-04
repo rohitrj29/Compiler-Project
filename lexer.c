@@ -1,46 +1,15 @@
 //#include "structures.h"
 //#include "lexer.h"
-#define bufferSize 4
-#define maxVarSize 21
-#define SIZE 10000
+#include "hashtable.h"
+#include "lexer.h"
+#include "lexerDef.h"
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<math.h>
 
-
-
-
-
-
-//info of the token returned by the lexer
-typedef struct {
-    char *value;
-    char *tkId;
-    int linenumber;
-} TokenInfo;
-
-//structure for the symbol table
-typedef struct {
-    char *tokId;
-    char *entry;
-} HashEntry;
-
-//structure for twin buffer 
-typedef struct {
-    char buffer1[bufferSize];
-    char buffer2[bufferSize];
-    int forward;
-    int lexBegin;
-    int inUseBuffer; // 1 for First and 2 for Second
-} TwinBuffer;
-
-
-
-
-
-
-
+#define maxVarSize 100
 
 int lineNumber = 0;
 
@@ -140,7 +109,20 @@ TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int li
     return tokenInfo;
 }
 
+void generateErrorMessage(char *errorMessage, int lineNumber, char *temp) {  
+    errorMessage = (char *) malloc(sizeof(char) * MAXSIZE);
+    strcpy(errorMessage, "Line ");
+    char str[5];  
+    sprintf(str, "%d", lineNumber + 1);
+    strcat(errorMessage, str);
 
+    char str1[100] = " Error:  Unknown Pattern: <";
+    strcat(errorMessage, str1);
+    strcat(errorMessage, temp);
+    strcat(errorMessage, ">");
+
+    printf("%s\n", errorMessage);
+}
 
 TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
     
@@ -304,22 +286,26 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             break;
 
             case 11:
-            if(currentCharacter >= '0' && currentCharacter<='9'){
-                state=12;
-            }
-            else 
-            {
-                //error
-                twinBuffer->lexBegin=twinBuffer->forward;
-                
-                return returnToken(tokenInfo,"error" , NULL,lineNumber);
-                break;
-            }
-            temp[tempIndex] = currentCharacter;
-            tempIndex++;
+                if(currentCharacter >= '0' && currentCharacter<='9'){
+                    state=12;
+                }
+                else 
+                {
+                    //error
+                    twinBuffer -> lexBegin = twinBuffer -> forward;
 
-            twinBuffer -> forward ++;
-            break;
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    
+                    return returnToken(tokenInfo, errorMessage, NULL, lineNumber);
+                    break;
+                }
+
+                temp[tempIndex] = currentCharacter;
+                tempIndex++;
+
+                twinBuffer -> forward ++;
+                break;
 
             case 12:
             if(currentCharacter=='E'){
@@ -349,7 +335,11 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             else {
                 //error
                 twinBuffer->lexBegin=twinBuffer->forward;
-                return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                char *errorMessage;
+                generateErrorMessage(errorMessage, lineNumber, temp);
+
+                return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                 break;
             }
             temp[tempIndex] = currentCharacter;
@@ -365,7 +355,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
             }
             temp[tempIndex] = currentCharacter;
@@ -391,7 +384,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
                 }
                 
@@ -459,7 +455,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
                 }
                 break;
@@ -578,14 +577,21 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             case 43:
                 if(currentCharacter == '&'){
                     state = 44;
-                    twinBuffer->forward++;
-                }else {
+                } else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+                    
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
                 }
-                break;
+                
+                    temp[tempIndex] = currentCharacter;
+                    tempIndex++;
+
+                    twinBuffer -> forward ++;
+                    break;
                 
             case 44:
                 if(currentCharacter == '&'){
@@ -598,7 +604,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
                 }
                 break;
@@ -610,7 +619,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
                     break;
                 }
                 break;
@@ -626,7 +638,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo,errorMessage,NULL,lineNumber);
                     break;
                 }
                 break;
@@ -642,7 +657,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
                     break;
                 }
                 break;
@@ -657,7 +675,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
                     break;
                 }
                 break;
@@ -717,7 +738,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 } else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, "error",NULL,lineNumber);
+
+                    char *errorMessage;
+                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
                     break;
                 }
 
@@ -751,7 +775,9 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             //todo: default case when starts with unknown symbol
                 //twinBuffer->forward++;
                 twinBuffer->lexBegin=twinBuffer->forward;
-                return returnToken(tokenInfo, "error",NULL,lineNumber);
+                char *errorMessage;
+                generateErrorMessage(errorMessage, lineNumber, temp);
+                return returnToken(tokenInfo, errorMessage ,NULL,lineNumber);
                 break;
 
         }
@@ -760,145 +786,14 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
     }
 }
 
-
-
-
-//symbol table
-
-
-// Define a structure for a key-value pair
-typedef struct KeyValuePair {
-    char *key;
-    char *value;
-    struct KeyValuePair *next;
-} Element;
-
-// Define the hashmap structure
-typedef struct HashMap {
-    struct KeyValuePair *buckets[SIZE];
-} HashMap;
-
-// Hash function to determine the bucket index for a given key
-unsigned int hash(char *key) {
-    unsigned int hash_value = 0;
-    while (*key != '\0') {
-        hash_value = (hash_value << 5) + *key++;
-    }
-
-    return hash_value % SIZE;
-}
-
-// Function to insert a key-value pair into the hashmap
-void insertIntoHash(HashMap *map, char *key, char *value) {
-    unsigned int index = hash(key);
-
-    // Check if the key already exists in the bucket
-    Element *current = map -> buckets[index];
-    while (current != NULL) {
-        if (strcmp(current -> key, key) == 0) {
-            // Key already exists, update the value
-            current -> value = value;
-            return;
-        }
-
-        current = current -> next;
-    }
-
-    // Key doesn't exist, create a new key-value pair
-    Element *newPair = (Element*) malloc(sizeof(Element));
-    newPair -> key = strdup(key);
-    newPair -> value = value;
-    newPair -> next = map -> buckets[index];
-    map -> buckets[index] = newPair;
-}
-
-// Function to initialize a new hashmap
-HashMap *initializeHashMap() {
-    HashMap *myMap = (HashMap*) malloc (sizeof(HashMap));
-    for (int i = 0; i < SIZE; i++) {
-        myMap -> buckets[i] = NULL;
-    }
-
-    // Inserting key-value pairs
-    insertIntoHash(myMap, "with", "TK_WITH");
-    insertIntoHash(myMap, "parameters", "TK_PARAMETERS");
-    insertIntoHash(myMap, "end", "TK_END");
-    insertIntoHash(myMap, "while", "TK_WHILE");
-    insertIntoHash(myMap, "union", "TK_UNION");
-    insertIntoHash(myMap, "endunion", "TK_ENDUNION");
-    insertIntoHash(myMap, "definetype", "TK_DEFINETYPE");
-    insertIntoHash(myMap, "as", "TK_AS");
-    insertIntoHash(myMap, "type", "TK_TYPE");
-    insertIntoHash(myMap, "_main", "TK_MAIN");
-    insertIntoHash(myMap, "global", "TK_GLOBAL");
-    insertIntoHash(myMap, "parameter", "TK_PARAMETER");
-    insertIntoHash(myMap, "list", "TK_LIST");
-    insertIntoHash(myMap, "input", "TK_INPUT");
-    insertIntoHash(myMap, "output", "TK_OUTPUT");
-    insertIntoHash(myMap, "int", "TK_INT");
-    insertIntoHash(myMap, "real", "TK_REAL");
-    insertIntoHash(myMap, "endwhile", "TK_ENDWHILE");
-    insertIntoHash(myMap, "if", "TK_IF");
-    insertIntoHash(myMap, "then", "TK_THEN");
-    insertIntoHash(myMap, "endif", "TK_ENDIF");
-    insertIntoHash(myMap, "read", "TK_READ");
-    insertIntoHash(myMap, "write", "TK_WRITE");
-    insertIntoHash(myMap, "return", "TK_RETURN");
-    insertIntoHash(myMap, "call", "TK_CALL");
-    insertIntoHash(myMap, "record", "TK_RECORD");
-    insertIntoHash(myMap, "endrecord", "TK_ENDRECORD");
-    insertIntoHash(myMap, "else", "TK_ELSE");
-
-    return myMap;
-}
-
-// Function to search for a key in the hashmap
-char *getValue(HashMap *map, char *key) {
-    unsigned int index = hash(key);
-    Element *current = map -> buckets[index];
-
-    // Iterate through the linked list at the bucket
-    while (current != NULL) {
-        if (strcmp(current -> key, key) == 0) {
-            // Key found, return the corresponding value
-            return current -> value;
-        }
-
-        current = current->next;
-    }
-
-    // Key not found
-    return "KEY NOT FOUND";
-}
-
-// Function to free the memory used by the hashmap
-void destroyHashMap(HashMap *map) {
-    for (int i = 0; i < SIZE; i++) {
-        Element *current = map -> buckets[i];
-
-        while (current != NULL) {
-            Element *next = current->next;
-
-            free(current->key);
-            free(current);
-
-            current = next;
-        }
-    }
-    free(map);
-}
-
-
-
-
-int main() {
+void runLexerOnly() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t1(1).txt", "r");
+    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t6.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
-        return 1;
+        exit(1);
     }
 
     // Initialize Twin Buffer
@@ -913,10 +808,10 @@ int main() {
     filePointer=getStream(filePointer, twinBuffer);
     TokenInfo *tkinfo;
     while(filePointer!=NULL){
-        tkinfo=getNextToken(twinBuffer,filePointer);
+        tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
-            printf("Line no. %d  Lexical Error\n",lineNumber+1);
+            // printf("Line no. %d  Lexical Error\n",lineNumber+1);
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
@@ -925,18 +820,29 @@ int main() {
         }
         else
         {   
-            if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
-                insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
+            if(strlen(tkinfo->value) <= 20)
+            {
+                if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
+                    insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
                 
-            } 
+                }    
             
-            printf("Line No. %d Lexeme %s  Token %s \n", lineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
-            // printf("%s ",tkinfo->tkId);
-            // printf("%s \n",tkinfo->value);
+                printf("Line %d Lexeme: %s Token %s \n", lineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                // printf("%s ",tkinfo->tkId);
+                // printf("%s \n",tkinfo->value);
+            }
+            else {
+                printf("Line %d Error:  Identifier is too long\n", lineNumber+1);
+            }
         }
         
     }
     destroyHashMap(myMap);
     fclose(filePointer);
+    return;
+}
+
+int main() {
+    runLexerOnly();
     return 0;
 }

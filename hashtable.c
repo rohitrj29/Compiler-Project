@@ -1,21 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "hashtable.h"
 
-// TODO: size?
-#define SIZE 100000
-
-// Define a structure for a key-value pair
-typedef struct KeyValuePair {
-    char *key;
-    char *value;
-    struct KeyValuePair *next;
-} Element;
-
-// Define the hashmap structure
-typedef struct HashMap {
-    struct KeyValuePair *buckets[SIZE];
-} HashMap;
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
 
 // Hash function to determine the bucket index for a given key
 unsigned int hash(char *key) {
