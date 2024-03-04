@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
         }
 
         default:
-            printf("Invalid option chosen, please try again!");
+            printf("Invalid option chosen, please try again!\n");
             break;
         }
     }

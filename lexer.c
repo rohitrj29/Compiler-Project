@@ -1019,7 +1019,7 @@ void runLexerOnly(char *fileName)
         tkinfo = getNextToken(twinBuffer, filePointer);
         if (tkinfo->tkId == NULL)
         {
-            printf(tkinfo->value);
+            printf("%s", tkinfo->value);
             // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
             continue;
         }
