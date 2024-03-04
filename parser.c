@@ -5,8 +5,9 @@
 #include "parserDef.h"
 #include "hashtable.h"
 #include "lexerDef.h"
+#include "lexer.h"
 
-int lineNumber = 0;
+int parserLineNumber = 0;
 
 // Arrays to store data
 GrammarRule grammarRule[MAXRULES];
@@ -106,8 +107,14 @@ void printParseTree(ParseTreeNode *root) {
         printParseTree(root -> children[i]);
         
     }
-    printf("%s  \n", root->lexeme);
+    if(root->numChildren==0){
+        printf("Terminal : %s  Lexeme : %s Line No : %d \n", root->lexeme, value[root->outIndex],lineNo[root->outIndex]);
+    }
+    else{
+    printf("Non-Terminal : %s  \n", root->lexeme);
+    }
 
+    // value , line no, token
     printParseTree(root->children[0]);
 
 }
@@ -207,7 +214,7 @@ void intialiseFFandLookup() {
     int entry = 0;
     char prev[MAXTERM] = "";
 
-    for (int i = 0; i < lineNumber; i++)
+    for (int i = 0; i < parserLineNumber; i++)
     {
         char nonterm[MAXTERM];
         strcpy(nonterm, grammarRule[i].leftElement);
@@ -327,7 +334,7 @@ void findFirst(int ffind, int grammarInd) {
 
 
 void findFollow(int ffIndex){
-    for(int i=0;i<lineNumber;i++){
+    for(int i=0;i<parserLineNumber;i++){
         int found=0;
         
         for(int j=0;j<grammarRule[i].noOfElements;j++){
@@ -578,8 +585,6 @@ void parseInputSourceCode() {
     startSymbolEle -> nodePointer = root;
     push(myStack, startSymbolEle);
 
-    
-
     int success = 1;
     while (currtoken[0] != '$') {  
 
@@ -710,7 +715,7 @@ void printFirstFollow(){
 
 void printGrammarRules(){
     // print the grammar rules
-    for (int i = 0; i < lineNumber; i++)
+    for (int i = 0; i < parserLineNumber; i++)
     {
         printf("%s ->   ", grammarRule[i].leftElement);
         for (int j = 0; j < grammarRule[i].noOfElements; j++)
@@ -793,7 +798,7 @@ void startParsing()
     if (fp == NULL)
     {
         printf("File not found\n");
-        return 1; // Return with error status
+        exit(1); // Return with error status
     }
 
     char line[LINESIZE];
@@ -814,20 +819,20 @@ void startParsing()
             
             if (i == 0)
             {
-                strcpy(grammarRule[lineNumber].leftElement, token);
+                strcpy(grammarRule[parserLineNumber].leftElement, token);
             }
             else
             {
-                strcpy(grammarRule[lineNumber].rightElements[i - 1], token);
+                strcpy(grammarRule[parserLineNumber].rightElements[i - 1], token);
             }
             i++;
             token = strtok(NULL, " ");
             
         }
 
-        grammarRule[lineNumber].noOfElements = i - 1;
-        grammarRule[lineNumber].ruleNo = lineNumber;
-        lineNumber++;
+        grammarRule[parserLineNumber].noOfElements = i - 1;
+        grammarRule[parserLineNumber].ruleNo = parserLineNumber;
+        parserLineNumber++;
     }
 
     fclose(fp);    
@@ -842,7 +847,7 @@ void startParsing()
     //  printParseTable();
     // printFirstFollow();
     
-    return 0;
+    return;
 }
 
 
@@ -866,7 +871,7 @@ void runLexerAndParser() {
     //create new hashtable and initialise with keywords
     HashMap *myMap = initializeHashMap();
     // Call function to get buffer
-    filePointer=getStream(filePointer, twinBuffer);
+    filePointer = getStream(filePointer, twinBuffer);
     TokenInfo *tkinfo;
 
     token = (char **) malloc (sizeof(char *) * MAX_SIZE);
@@ -879,7 +884,7 @@ void runLexerAndParser() {
         if(tkinfo->tkId==NULL)
         {
             // printf("Line no. %d  Lexical Error\n",lineNumber+1);
-            lineNo[ind]=lineNumber+1;
+            lineNo[ind] = lexerLineNumber+1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind], "ERROR");
             value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
@@ -888,7 +893,7 @@ void runLexerAndParser() {
         }
         else if(strcmp(tkinfo->value,"$")==0){
             // printf("%s",tkinfo->value);
-            lineNo[ind]=lineNumber+1;
+            lineNo[ind] = lexerLineNumber +1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind],tkinfo->tkId);
             value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
@@ -904,8 +909,8 @@ void runLexerAndParser() {
                 
                 }    
             
-                printf("Line No. %d Lexeme %s  Token %s \n", lineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
-                lineNo[ind]=lineNumber+1;
+                // printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(token[ind], tkinfo->tkId);
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
@@ -913,7 +918,7 @@ void runLexerAndParser() {
                 
             }
             else {
-                lineNo[ind]=lineNumber+1;
+                lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(token[ind], "ERROR");
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
@@ -925,11 +930,13 @@ void runLexerAndParser() {
 
     parseInputSourceCode();
 
+    printf("Both lexical and syntax analysis modules implemented\n");
+
     destroyHashMap(myMap);
     fclose(filePointer);
-    return 0;
+    return;
 }
 
-int main(){
+int main() {
     runLexerAndParser();
 }

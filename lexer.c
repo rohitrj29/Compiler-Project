@@ -11,7 +11,7 @@
 
 #define maxVarSize 100
 
-int lineNumber = 0;
+int lexerLineNumber = 0;
 int lenflag = 0;
 int idlen = 0;
 
@@ -63,7 +63,7 @@ FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer) {
 int fromZeroToWhere(char currentCharacter) {    
 
     if(currentCharacter == '\n') {
-        lineNumber++;
+        lexerLineNumber++;
         return 0;
     } 
     
@@ -107,19 +107,19 @@ int fromZeroToWhere(char currentCharacter) {
 
 
 
-TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber) {
+TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lexerLineNumber) {
     tokenInfo -> value = value;
     tokenInfo -> tkId = tokenID;
-    tokenInfo -> linenumber = lineNumber;
+    tokenInfo -> linenumber = lexerLineNumber;
 
     return tokenInfo;
 }
 
-void generateErrorMessage(char *errorMessage, int lineNumber, char *temp) {  
+void generateErrorMessage(char *errorMessage, int lexerLineNumber, char *temp) {  
     errorMessage = (char *) malloc(sizeof(char) * MAXSIZE);
     strcpy(errorMessage, "Line ");
     char str[5];  
-    sprintf(str, "%d", lineNumber + 1);
+    sprintf(str, "%d", lexerLineNumber + 1);
     strcat(errorMessage, str);
 
     char str1[100] = " Error:  Unknown Pattern: <";
@@ -178,7 +178,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_FIELDID";
                     twinBuffer -> lexBegin = twinBuffer -> forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
 
                 temp[tempIndex] = currentCharacter;
@@ -208,15 +208,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 } else {
                     // Retract 1                    
                     //twinBuffer -> forward --;
-                    if(lenflag == 1)
-                    {
-                        printf("");
-                        return;
-                    }
                     char *tk_id = "TK_ID";
                     twinBuffer->lexBegin = twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber); 
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber); 
                 }
                 
                 temp[tempIndex] = currentCharacter;
@@ -240,7 +235,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_ID";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber); 
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber); 
                 }
                 
                 temp[tempIndex] = currentCharacter;
@@ -254,7 +249,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     state = 5;
                     twinBuffer -> forward ++;
                 } else {
-                    //lineNumber ++;
+                    //lexerLineNumber ++;
                     state = 0;
                 }
 
@@ -272,15 +267,10 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 } else {                    
                     // Retract 1                    
                     //twinBuffer -> forward --;
-                    if(lenflag == 1)
-                    {
-                        printf("");
-                        return;
-                    }
                     char *tk_id = "TK_FIELDID";
                     twinBuffer -> lexBegin = twinBuffer -> forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 
                 temp[tempIndex] = currentCharacter;
@@ -302,7 +292,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 char *tk_id = "TK_NUM";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -320,7 +310,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 char *tk_id = "TK_NUM";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -338,9 +328,9 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer -> lexBegin = twinBuffer -> forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
                     
-                    return returnToken(tokenInfo, errorMessage, NULL, lineNumber);
+                    return returnToken(tokenInfo, errorMessage, NULL, lexerLineNumber);
                     break;
                 }
 
@@ -359,7 +349,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 char *tk_id = "TK_RNUM";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
             }
             temp[tempIndex] = currentCharacter;
             tempIndex++;
@@ -380,9 +370,9 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 twinBuffer->lexBegin=twinBuffer->forward;
 
                 char *errorMessage;
-                generateErrorMessage(errorMessage, lineNumber, temp);
+                generateErrorMessage(errorMessage, lexerLineNumber, temp);
 
-                return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                 break;
             }
             temp[tempIndex] = currentCharacter;
@@ -400,8 +390,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
             }
             temp[tempIndex] = currentCharacter;
@@ -420,7 +410,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_RNUM";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                     break;
 
                 }
@@ -429,8 +419,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
                 
@@ -463,7 +453,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_FUNID";
                     temp[tempIndex]='\0';
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 temp[tempIndex] = currentCharacter;
                 tempIndex++;
@@ -483,7 +473,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_FUNID";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 temp[tempIndex] = currentCharacter;
                 tempIndex++;
@@ -500,8 +490,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -519,7 +509,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_RUID";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
 
                 break;
@@ -529,7 +519,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 char *tk_id = "TK_SQL";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
             }
                 break;
             
@@ -537,84 +527,84 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 {char *tk_id = "TK_SQR";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
                 
             case 32:
                 {char *tk_id = "TK_COMMA";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
             
             case 33:
                 {char *tk_id = "TK_SEM";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
                 
             case 34:
                 {char *tk_id = "TK_COLON";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
 
             case 35:{
                 char *tk_id = "TK_DOT";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
 
             case 36:{
                 char *tk_id = "TK_OP";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
 
             case 37: {
                 char *tk_id = "TK_CL";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
             
             case 38: {
                 char *tk_id = "TK_PLUS";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
             
             case 39: {
                 char *tk_id = "TK_MINUS";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
             
             case 40:{
                 char *tk_id = "TK_MUL";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
                 
             case 41:{
                 char *tk_id = "TK_DIV";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
 
             case 42:{
                 char *tk_id = "TK_NOT";
                 twinBuffer->lexBegin=twinBuffer->forward;
                 temp[tempIndex]='\0';
-                return returnToken(tokenInfo, temp, tk_id, lineNumber);}
+                return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);}
                 break;
             
             case 43:
@@ -625,8 +615,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                     
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
                 
@@ -642,15 +632,15 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_v="&&&";
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_v, tk_id, lexerLineNumber);
                 }
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -664,8 +654,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage, NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -676,15 +666,15 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo,errorMessage,NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo,errorMessage,NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -696,14 +686,14 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_v, tk_id, lexerLineNumber);
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -714,14 +704,14 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_v = "!=";
                     twinBuffer->forward++;
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, tk_v, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_v, tk_id, lexerLineNumber);
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
                 break;
@@ -735,14 +725,14 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='=';
                     temp[tempIndex+1]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }else {
                     // Retract 1
                     //twinBuffer -> forward --;
                     char *tk_id = "TK_LT";
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 
                 temp[tempIndex] = currentCharacter;
@@ -761,7 +751,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     char *tk_id = "TK_LT";
                     char *tk_val="<";
                     
-                    return returnToken(tokenInfo, tk_val, tk_id, lineNumber);
+                    return returnToken(tokenInfo, tk_val, tk_id, lexerLineNumber);
                 }
                 temp[tempIndex] = currentCharacter;
                 tempIndex++;
@@ -777,14 +767,14 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     twinBuffer -> forward ++;
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 } else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
 
                     char *errorMessage;
-                    generateErrorMessage(errorMessage, lineNumber, temp);
-                    return returnToken(tokenInfo, errorMessage,NULL,lineNumber);
+                    generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                    return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
                     break;
                 }
 
@@ -798,19 +788,19 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                     tempIndex++;
                     twinBuffer->lexBegin=twinBuffer->forward;
                     temp[tempIndex]='\0';
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }   else {
                     // Retract 1
                     //twinBuffer -> forward --;
                     char *tk_id = "TK_GT";
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    return returnToken(tokenInfo, temp, tk_id, lineNumber);
+                    return returnToken(tokenInfo, temp, tk_id, lexerLineNumber);
                 }
                 break;
             
             case 62:{
                 char *tk_id ="EOF";
-                return returnToken(tokenInfo, "$",tk_id,lineNumber);
+                return returnToken(tokenInfo, "$",tk_id,lexerLineNumber);
             }
                 break;
 
@@ -819,8 +809,8 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 //twinBuffer->forward++;
                 twinBuffer->lexBegin=twinBuffer->forward;
                 char *errorMessage;
-                generateErrorMessage(errorMessage, lineNumber, temp);
-                return returnToken(tokenInfo, errorMessage ,NULL,lineNumber);
+                generateErrorMessage(errorMessage, lexerLineNumber, temp);
+                return returnToken(tokenInfo, errorMessage ,NULL,lexerLineNumber);
                 break;
 
         }
@@ -854,7 +844,7 @@ void runLexerOnly() {
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
-            // printf("Line no. %d  Lexical Error\n",lineNumber+1);
+            // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
@@ -870,22 +860,20 @@ void runLexerOnly() {
                 
                 }    
             
-                printf("Line %d Lexeme: %s Token %s \n", lineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                printf("Line %d Lexeme: %s Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
                 // printf("%s ",tkinfo->tkId);
                 // printf("%s \n",tkinfo->value);
             }
             else {
-                printf("Line %d Error:  Identifier is too long\n", lineNumber+1);
+                printf("Line %d Error:  Identifier is too long\n", lexerLineNumber+1);
             }
         }
         
     }
+
+    printf("Only Lexical analyzer module developed!\n");
+
     destroyHashMap(myMap);
     fclose(filePointer);
     return;
-}
-
-int main() {
-    runLexerOnly();
-    return 0;
 }

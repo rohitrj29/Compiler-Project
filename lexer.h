@@ -6,6 +6,8 @@
 
 #define MAXSIZE 100
 
+extern int lexerLineNumber;
+
 FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer);
 int fromZeroToWhere(char currentCharacter);
 TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber);
