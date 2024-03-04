@@ -414,7 +414,8 @@ void generateErrorMessage(char **errorMessage, int lexerLineNumber, char *temp) 
     strcat(*errorMessage, temp);
     strcat(*errorMessage, ">");
 
-    printf("%s\n", *errorMessage);
+    // printf("%s\n", *errorMessage);
+    return ;
 }
 
 
@@ -1105,6 +1106,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
 
         
     }
+
 }
 
 void runLexerOnly() {
@@ -1132,6 +1134,7 @@ void runLexerOnly() {
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
+            printf(tkinfo->value);
             // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
             continue;
         }
@@ -1757,7 +1760,7 @@ void parseInputSourceCode() {
 
         if(strcmp(currtoken,"ERROR")==0){
             success=0;
-            printf("Line No. %d Error:  %s  \n",lineNo[ind-1],value[ind-1]);
+            printf("%s  \n",value[ind-1]);
             strcpy(currtoken, token[ind ++]);
             continue;
         }
@@ -2051,13 +2054,13 @@ void runLexerAndParser() {
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
-            // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
+            // printf("%s\n",tkinfo->value);
             lineNo[ind] = lexerLineNumber+1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind], "ERROR");
             value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(value[ind],tkinfo->value);
-            continue;
+            
         }
         else if(strcmp(tkinfo->value,"$")==0){
             // printf("%s \n",tkinfo->value);
@@ -2077,7 +2080,7 @@ void runLexerAndParser() {
                 
                 }    
             
-                // printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                // printf("Line %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
                 lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(token[ind], getValue(myMap,tkinfo->value));
@@ -2091,7 +2094,7 @@ void runLexerAndParser() {
                 strcpy(token[ind], "ERROR");
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(value[ind],"Identifier is too long");
-                // printf("Line No. %d Error:  Identifier is too long\n", lexerLineNumber+1);
+                // printf("Line %d Error:  Identifier is too long\n", lexerLineNumber+1);
             }
         }
         ind++;
@@ -2104,9 +2107,10 @@ void runLexerAndParser() {
     }
 
     parseInputSourceCode();
-    //printtoken();
-    //printf("Both lexical and syntax analysis modules implemented\n");
-
+    
+    free(token);
+    free(value);
+    free(lineNo);
     destroyHashMap(myMap);
     fclose(filePointer);
     return;
