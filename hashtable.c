@@ -1,13 +1,15 @@
 #include "hashtable.h"
 
-#include<stdlib.h>
-#include<string.h>
-#include<math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 // Hash function to determine the bucket index for a given key
-unsigned int hash(char *key) {
+unsigned int hash(char *key)
+{
     unsigned int hash_value = 0;
-    while (*key != '\0') {
+    while (*key != '\0')
+    {
         hash_value = (hash_value << 5) + *key++;
     }
 
@@ -15,34 +17,39 @@ unsigned int hash(char *key) {
 }
 
 // Function to insert a key-value pair into the hashmap
-void insertIntoHash(HashMap *map, char *key, char *value) {
+void insertIntoHash(HashMap *map, char *key, char *value)
+{
     unsigned int index = hash(key);
 
     // Check if the key already exists in the bucket
-    Element *current = map -> buckets[index];
-    while (current != NULL) {
-        if (strcmp(current -> key, key) == 0) {
+    Element *current = map->buckets[index];
+    while (current != NULL)
+    {
+        if (strcmp(current->key, key) == 0)
+        {
             // Key already exists, update the value
-            current -> value = value;
+            current->value = value;
             return;
         }
 
-        current = current -> next;
+        current = current->next;
     }
 
     // Key doesn't exist, create a new key-value pair
-    Element *newPair = (Element*) malloc(sizeof(Element));
-    newPair -> key = strdup(key);
-    newPair -> value = value;
-    newPair -> next = map -> buckets[index];
-    map -> buckets[index] = newPair;
+    Element *newPair = (Element *)malloc(sizeof(Element));
+    newPair->key = strdup(key);
+    newPair->value = value;
+    newPair->next = map->buckets[index];
+    map->buckets[index] = newPair;
 }
 
 // Function to initialize a new hashmap
-HashMap *initializeHashMap() {
-    HashMap *myMap = (HashMap*) malloc (sizeof(HashMap));
-    for (int i = 0; i < SIZE; i++) {
-        myMap -> buckets[i] = NULL;
+HashMap *initializeHashMap()
+{
+    HashMap *myMap = (HashMap *)malloc(sizeof(HashMap));
+    for (int i = 0; i < SIZE; i++)
+    {
+        myMap->buckets[i] = NULL;
     }
 
     // Inserting key-value pairs
@@ -79,15 +86,18 @@ HashMap *initializeHashMap() {
 }
 
 // Function to search for a key in the hashmap
-char *getValue(HashMap *map, char *key) {
+char *getValue(HashMap *map, char *key)
+{
     unsigned int index = hash(key);
-    Element *current = map -> buckets[index];
+    Element *current = map->buckets[index];
 
     // Iterate through the linked list at the bucket
-    while (current != NULL) {
-        if (strcmp(current -> key, key) == 0) {
+    while (current != NULL)
+    {
+        if (strcmp(current->key, key) == 0)
+        {
             // Key found, return the corresponding value
-            return current -> value;
+            return current->value;
         }
 
         current = current->next;
@@ -98,11 +108,14 @@ char *getValue(HashMap *map, char *key) {
 }
 
 // Function to free the memory used by the hashmap
-void destroyHashMap(HashMap *map) {
-    for (int i = 0; i < SIZE; i++) {
-        Element *current = map -> buckets[i];
+void destroyHashMap(HashMap *map)
+{
+    for (int i = 0; i < SIZE; i++)
+    {
+        Element *current = map->buckets[i];
 
-        while (current != NULL) {
+        while (current != NULL)
+        {
             Element *next = current->next;
 
             free(current->key);

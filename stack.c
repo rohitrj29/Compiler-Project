@@ -5,22 +5,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-Stack* initializeStack(Stack *stack) {
-    stack = (Stack *) malloc(sizeof(Stack));
+Stack *initializeStack(Stack *stack)
+{
+    stack = (Stack *)malloc(sizeof(Stack));
     stack->top = -1;
     return stack;
 }
 
-int isEmpty(Stack *stack) {
+int isEmpty(Stack *stack)
+{
     return (stack->top == -1);
 }
 
-int isFull(Stack *stack) {
+int isFull(Stack *stack)
+{
     return (stack->top == MAX_SIZE - 1);
 }
 
-void push(Stack *stack, StackElement *stackEle) {
-    if (isFull(stack)) {
+void push(Stack *stack, StackElement *stackEle)
+{
+    if (isFull(stack))
+    {
         printf("Stack overflow!\n");
         return;
     }
@@ -29,8 +34,10 @@ void push(Stack *stack, StackElement *stackEle) {
     stack->items[stack->top] = stackEle;
 }
 
-StackElement* pop(Stack *stack) {
-    if (isEmpty(stack)) {
+StackElement *pop(Stack *stack)
+{
+    if (isEmpty(stack))
+    {
         printf("Stack underflow!\n");
         return NULL;
     }
@@ -38,9 +45,10 @@ StackElement* pop(Stack *stack) {
     return stack->items[stack->top--];
 }
 
-
-StackElement* peek(Stack *stack) {
-    if (isEmpty(stack)) {
+StackElement *peek(Stack *stack)
+{
+    if (isEmpty(stack))
+    {
         printf("Stack is empty!\n");
         return NULL;
     }
@@ -48,16 +56,19 @@ StackElement* peek(Stack *stack) {
     return stack->items[stack->top];
 }
 
-StackElement *createNewStackElement (char lexeme[MAXTERM]) {
-    StackElement *stackElement = (StackElement *) malloc (sizeof(StackElement));
-    stackElement -> nodePointer = NULL;
-    strcpy(stackElement -> lexeme, lexeme);
+StackElement *createNewStackElement(char lexeme[MAXTERM])
+{
+    StackElement *stackElement = (StackElement *)malloc(sizeof(StackElement));
+    stackElement->nodePointer = NULL;
+    strcpy(stackElement->lexeme, lexeme);
 
     return stackElement;
 }
 
-void freeStack(Stack *stack) {
-    while (!isEmpty(stack)) {
+void freeStack(Stack *stack)
+{
+    while (!isEmpty(stack))
+    {
         free(pop(stack));
     }
 }

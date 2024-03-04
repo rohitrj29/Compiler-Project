@@ -4,14 +4,16 @@
 #define SIZE 10000
 
 // Define a structure for a key-value pair
-typedef struct KeyValuePair {
+typedef struct KeyValuePair
+{
     char *key;
     char *value;
     struct KeyValuePair *next;
 } Element;
 
 // Define the hashmap structure
-typedef struct HashMap {
+typedef struct HashMap
+{
     struct KeyValuePair *buckets[SIZE];
 } HashMap;
 

@@ -11,10 +11,12 @@
 
 void initialPrint();
 
-int main (int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     initialPrint();
 
-    if (argc != 3) {
+    if (argc != 3)
+    {
         printf("You have not entered the test case file name or the parseTreeOutput file name, please retry again!");
         exit(1);
     }
@@ -26,17 +28,19 @@ int main (int argc, char* argv[]) {
 
     // TODO: All printing to be double checked as per mail
 
-    while (1) {
+    while (1)
+    {
         int optionChosenByUser;
-        scanf ("%d", optionChosenByUser);
+        scanf("%d", optionChosenByUser);
 
-        switch (optionChosenByUser) {
+        switch (optionChosenByUser)
+        {
         case 0:
             printf("Thanks for using our Compiler, have a nice day! \nExiting!");
             return 0;
-        
+
         case 1:
-            // Remove comments from code and print comment free code 
+            // Remove comments from code and print comment free code
             printf("Operation Compelete!");
             // TODO: Add these after every case
             break;
@@ -59,12 +63,12 @@ int main (int argc, char* argv[]) {
             // TODO: invoke your lexer and parser here, also see if idhar hi call krna h ya 3 press krne ke baad save krlena h
 
             clock_t endTime = clock();
-            double totalCPUTime = (double) (endTime - startTime);
+            double totalCPUTime = (double)(endTime - startTime);
             double totalCPUTimeInSeconds = totalCPUTime / CLOCKS_PER_SEC;
-            
+
             printf("Total CPU Time: %f , Total CPU Time in seconds: %f\n", totalCPUTime, totalCPUTimeInSeconds);
             break;
-        
+
         default:
             printf("Invalid option chosen, please try again!");
             break;
@@ -74,7 +78,8 @@ int main (int argc, char* argv[]) {
     return 0;
 }
 
-void initialPrint() {    
+void initialPrint()
+{
     printf("Welcome to our compiler!");
     printf("Press 0 to exit");
     pritnf("Press 1 to print comment-free code");

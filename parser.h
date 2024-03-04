@@ -23,7 +23,7 @@ int getTerminalIndex(char *terminal);
 bool isTerminal(char *element);
 void createParseTable();
 void fillSyncInParseTable();
-void createParseTree(char **input) ;
+void createParseTree(char **input);
 void printTerminals();
 void printFirstFollow();
 void printGrammarRules();

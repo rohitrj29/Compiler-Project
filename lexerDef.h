@@ -4,20 +4,23 @@
 #define bufferSize 4
 #define SIZE 10000
 
-typedef struct {
+typedef struct
+{
     char *value;
     char *tkId;
     int linenumber;
 } TokenInfo;
 
-//structure for the symbol table
-typedef struct {
+// structure for the symbol table
+typedef struct
+{
     char *tokId;
     char *entry;
 } HashEntry;
 
-//structure for twin buffer 
-typedef struct {
+// structure for twin buffer
+typedef struct
+{
     char buffer1[bufferSize];
     char buffer2[bufferSize];
     int forward;

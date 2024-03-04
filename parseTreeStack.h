@@ -10,18 +10,21 @@
 #define TOTALRULES 102
 #define PARSECOL 57
 
-typedef struct {
+typedef struct
+{
     char lexeme[MAXTERM];
     ParseTreeNode *children[MAXELE];
     int numChildren;
 } ParseTreeNode;
 
-typedef struct {
+typedef struct
+{
     char lexeme[MAXTERM];
     ParseTreeNode *nodePointer;
 } StackElement;
 
-typedef struct {
+typedef struct
+{
     StackElement *items[MAX_SIZE];
     int top;
 } Stack;
@@ -30,8 +33,8 @@ void initializeStack(Stack *stack);
 int isEmpty(Stack *stack);
 int isFull(Stack *stack);
 void push(Stack *stack, StackElement *str);
-StackElement* pop(Stack *stack);
-StackElement* peek(Stack *stack);
+StackElement *pop(Stack *stack);
+StackElement *peek(Stack *stack);
 void freeStack(Stack *stack);
 
 #endif

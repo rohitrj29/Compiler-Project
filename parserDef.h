@@ -42,9 +42,10 @@ typedef struct
     bool lock;
 } FirstFollow;
 
-typedef struct ParseTreeNode {
+typedef struct ParseTreeNode
+{
     char lexeme[MAXTERM];
-    struct ParseTreeNode* children[MAX_SIZE];
+    struct ParseTreeNode *children[MAX_SIZE];
     int numChildren;
     int outIndex;
 } ParseTreeNode;

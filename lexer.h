@@ -9,8 +9,8 @@
 
 extern int lexerLineNumber;
 
-FILE *getStream(FILE *filePointer, TwinBuffer* twinBuffer);
+FILE *getStream(FILE *filePointer, TwinBuffer *twinBuffer);
 int fromZeroToWhere(char currentCharacter);
-TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber);
-TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer);
+TokenInfo *returnToken(TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber);
+TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer);
 void runLexerOnly();
