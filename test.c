@@ -10,7 +10,7 @@
 #define maxVarSize 100
 
 
-#define MAX_SIZE 1000
+#define MAX_SIZE 150
 #define MAXELE 20
 #define LINESIZE 100000
 #define MAXTERM 50
@@ -1141,7 +1141,7 @@ void runLexerOnly() {
         }
         else
         {   
-            if(strlen(tkinfo->value) <= 30)
+            if((strlen(tkinfo->value) <= 20) | (strcmp(tkinfo->tkId,"TK_FUNID")==0 & strlen(tkinfo->value) <= 30))
             {
                 if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                     insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
@@ -2019,7 +2019,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t3.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t6.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -2039,12 +2039,15 @@ void runLexerAndParser() {
     filePointer = getStream(filePointer, twinBuffer);
     TokenInfo *tkinfo;
 
+    int capacity = MAX_SIZE;
+
     token = (char **) malloc (sizeof(char *) * MAX_SIZE);
     value = (char **) malloc (sizeof(char *) * MAX_SIZE);
     lineNo = (int *) malloc (sizeof(int) * MAX_SIZE);
 
     int ind=0;
     while(filePointer!=NULL) {
+        
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
@@ -2057,7 +2060,7 @@ void runLexerAndParser() {
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
-            // printf("%s",tkinfo->value);
+            // printf("%s \n",tkinfo->value);
             lineNo[ind] = lexerLineNumber +1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind],tkinfo->tkId);
@@ -2067,7 +2070,7 @@ void runLexerAndParser() {
         }
         else
         {   
-            if(strlen(tkinfo->value) < 20)
+            if( (strlen(tkinfo->value) <= 20) | (strcmp(tkinfo->tkId,"TK_FUNID")==0 & strlen(tkinfo->value) <= 30))
             {
                 if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                     insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
@@ -2092,6 +2095,12 @@ void runLexerAndParser() {
             }
         }
         ind++;
+        if(ind==capacity){
+            capacity = capacity * 2;
+            token = (char **) realloc(token, sizeof(char *) * capacity);
+            value = (char **) realloc(value, sizeof(char *) * capacity);
+            lineNo = (int *) realloc(lineNo, sizeof(int) * capacity);
+        }
     }
 
     parseInputSourceCode();
@@ -2103,12 +2112,9 @@ void runLexerAndParser() {
     return;
 }
 
-void printtoken()
-{
 
-}
 
 int main() {
     runLexerAndParser();
-    printtoken();
+    
 }
