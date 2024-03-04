@@ -54,7 +54,7 @@ GrammarRule grammarRule[MAXRULES];
 NTLookupEntry NTLookup[MAXNONTERM];
 FirstFollow firstFollow[MAXNONTERM];
 char terminals[PARSECOL][MAXTERM];
-int parseTable[55][PARSECOL];
+int parseTable[53][PARSECOL];
 
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
@@ -153,19 +153,20 @@ void freeStack(Stack *stack) {
     }
 }
 
-void printInOrder(ParseTreeNode *root) {
+void printParseTree(ParseTreeNode *root) {
     if (root->lexeme == NULL) {
         return;
     }
 
     // Traverse each child node
-    for (int i = root -> numChildren - 1; i >=0 ; i--) {
-        if(root->children[i]->numChildren>0)
-        printInOrder(root -> children[i]);
-        printf("%s ", root->children[i]->lexeme);
+    for (int i = root -> numChildren - 1; i > 0 ; i--) {
+        printParseTree(root -> children[i]);
+        
     }
+    printf("%s  \n", root->lexeme);
 
-    printf("\n");
+    printParseTree(root->children[0]);
+
 }
 
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray) {
@@ -382,13 +383,7 @@ void findFirst(int ffind, int grammarInd) {
 }
 
 void populateFirst(){
-    for(int i=0;i<noOfNonTerminals;i++){
-        if(firstFollow[i].visited==true){
-            continue;
-        }
-        firstFollow[i].noOfFirst=0;
-        findFirst(i, NTLookup[i].grammarIndex);
-    }
+    
 }
 
 void findFollow(int ffIndex){
@@ -489,14 +484,6 @@ void findFollow(int ffIndex){
     return;
 }
 
-void populateFollow(){
-    firstFollow[0].noOfFollow=1;
-    strcpy(firstFollow[0].followSet[0],"$");
-    for(int i=1;i<noOfNonTerminals;i++){
-        firstFollow[i].noOfFollow=0;
-        findFollow(i);
-    }
-}
 
 /*
 parser table population
@@ -525,6 +512,30 @@ bool isTerminal(char *element)
     return false;
 }
 
+void fillSyncInParseTable()
+{
+    for(int i = 0; i < noOfNonTerminals; i++)
+    {
+        
+            
+        for(int k = 0; k < firstFollow[i].noOfFollow; k++)
+        {
+            int followIndex = getTerminalIndex(firstFollow[i].followSet[k]);
+            if(parseTable[i][followIndex] == -1)
+                parseTable[i][followIndex] = -2;
+        }
+        // for(int k = 0; k < firstFollow[i].noOfFirst; k++)
+        // {
+        //     int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
+        //     if(strcmp(firstFollow[i].firstSet[k],"eps")==0)
+        //     continue;
+        //     if(parseTable[i][firstIndex] == -1)
+        //         parseTable[i][firstIndex] = -2;
+        // }
+            
+        
+    }
+}
 
 void createParseTable()
 {   
@@ -605,35 +616,13 @@ void createParseTable()
         }
 
     }
-}
-
-void fillSyncInParseTable()
-{
-    for(int i = 0; i < noOfNonTerminals; i++)
-    {
-        
-            
-        for(int k = 0; k < firstFollow[i].noOfFollow; k++)
-        {
-            int followIndex = getTerminalIndex(firstFollow[i].followSet[k]);
-            if(parseTable[i][followIndex] == -1)
-                parseTable[i][followIndex] = -2;
-        }
-        // for(int k = 0; k < firstFollow[i].noOfFirst; k++)
-        // {
-        //     int firstIndex = getTerminalIndex(firstFollow[i].firstSet[k]);
-        //     if(strcmp(firstFollow[i].firstSet[k],"eps")==0)
-        //     continue;
-        //     if(parseTable[i][firstIndex] == -1)
-        //         parseTable[i][firstIndex] = -2;
-        // }
-            
-        
-    }
+    fillSyncInParseTable();
 }
 
 
-void createParseTree(char **input) {
+
+
+void parseInputSourceCode(char **input) {
     Stack *myStack;
     myStack = initializeStack(myStack);
     int i1 = 0;
@@ -661,7 +650,7 @@ void createParseTree(char **input) {
         }
         
         //both token and topElement are $ end 
-        if(strcmp(token,"TK_RETURN")==0){
+        if(strcmp(token,"TK_WHILE")==0){
             bool test=true;
         }
 
@@ -678,24 +667,34 @@ void createParseTree(char **input) {
         }else if (token[0]=='$' && topElement -> lexeme[0] == '$') {
             break;
         } else if (topElementIndex == -1) {
-            success = 0;
-            break;
+            success=0;
+            printf("Error: The token is %s for lexeme doesn't match the expected token %s \n",token,topElement->lexeme);
+            strcpy(token, input[i1 ++]);
+            pop (myStack);
+            free (topElement);
+
         }  else if (tableValue == -2) {
+            success=0;
+            printf("Sync Error: stack pop %s \n",topElement->lexeme);
             pop (myStack);
             free (topElement);            
         } else if (tableValue == -1) {
+            success=0;
+            printf("Error: input skip %s \n",token);
             strcpy(token, input[i1 ++]);
         } else if (tableValue >= 0) {
             GrammarRule rule = grammarRule[tableValue];
-            
+            pop(myStack);
+            free(topElement);
             for (int i = rule.noOfElements - 1; i >= 0; i--) {
                 if(strcmp(rule.rightElements[i], "eps") == 0) 
                 {   
                     //printf("%s\n",myStack->items[myStack->top]->lexeme);
-                    pop(myStack);
-                    free(topElement);
+                    // pop(myStack);
+                    // free(topElement);
                     continue;
                 }
+                
                 StackElement *newElement = createNewStackElement(rule.rightElements[i]);                
                 ParseTreeNode *treeNode = createNewParseTreeNode(rule.rightElements[i]);
 
@@ -718,11 +717,12 @@ void createParseTree(char **input) {
     }
 
     if (!success ) {
-        printf("Some Error occurred!!!\n");
+        
     } else {
-        printf("The Parse Tree has been created (EZ)\n");
-        printf("%s\n", root -> lexeme);
-        printInOrder(root);
+        printf("Input Source Code is syntactically correct ........\n");
+        printf("The inorder traversal of the parse tree is as follow: \n");
+        // printf("%s\n", root -> lexeme);
+        printParseTree(root);
     }
 
     // if stack is not empty pop it out 
@@ -815,6 +815,24 @@ char **populateInputStream() {
     return input;
 }
 
+void  computeFirstAndFollowSets(){
+    //populate first of all non terminals
+    for(int i=0;i<noOfNonTerminals;i++){
+        if(firstFollow[i].visited==true){
+            continue;
+        }
+        firstFollow[i].noOfFirst=0;
+        findFirst(i, NTLookup[i].grammarIndex);
+    }
+    //populate follow of all non terminals
+    firstFollow[0].noOfFollow=1;
+    strcpy(firstFollow[0].followSet[0],"$");
+    for(int i=1;i<noOfNonTerminals;i++){
+        firstFollow[i].noOfFollow=0;
+        findFollow(i);
+    }
+}
+
 int main()
 {
     FILE *fp;
@@ -863,15 +881,15 @@ int main()
     fclose(fp);    
 
     intialiseFFandLookup();
-    
     populateTerminals();
-    populateFirst();
-    populateFollow();
+
+
+    computeFirstAndFollowSets();
     createParseTable();
-    fillSyncInParseTable();
+    
     char **inputStream = populateInputStream();
     
-    createParseTree(inputStream);
+    parseInputSourceCode(inputStream);
     
     //  printParseTable();
     

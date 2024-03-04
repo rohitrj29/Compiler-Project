@@ -1,79 +1,15 @@
-
-%Test Case 3: Syntactically correct testcase
-%Following program computes the average marks obtained by students in three subjects
-
-%Following function reads marks of a student in all subjects and returns as a record variable
-% Note that the variable b7 is not used anywhere but it is the syntactic requirement to have 
-% atleast one input parameter
-_readMarks input parameter list[int b7]
-output parameter list [ record #marks b3c45];
-	read(b3c45.maths);
-	read(b3c45.physics);
-	read(b3c45.chemistry);
-	return [b3c45];
-end
-% Notice here that  your compiler recognizes the type definition of marks even before it is 
-% declared. This will be handled at the semantic analyzer phase.
-
-_computeFunctionValue input parameter list[int c3, int c4, int c5]
-output parameter list [real c6];
-	type real : d4cbcd5677;
-	type real : c4bbb;
-	c6 <--- 5000.79;
-	d4cbcd5677<--- ((c3 + 2*c4)-(c5-5))/ 4;
-	c4bbb <--- ((d4cbcd5677- 2.35)*(2345-234*8))+5*c3;
-	if((~(c4bbb == 0)) &&& (c4bbb > 78.56))
-	then
-		c6<--- d4cbcd5677/c4bbb;
-	else
-		write(c4bbb);
-	endif
-
-	return [c6];
+_sumN  input parameter list [int d5cc34]  
+output parameter list[real d3];
+	while ( b5b567 <= d5cc34);
+		b5b567 <--- b5b567 + 1;
+	endwhile;
+    record #two
+		type #point: beginpoint;
+	endrecord 
+	return [d3];
 end
 
-%The following program computes the average of marks of total d5cb34567  students
-_main 
-	record #marks
-		type real : maths; 
-		type real: physics; 
-		type real: chemistry;
-	endrecord
-	% each field above represents the marks obtained in corresponding subject
-
-	type record #marks : d4;
-	% The variable d4 stores the marks of one student
-
-	type int : b5;
-	type int : d5cb34567;
-	type record #marks : b5c6;
-	%The identifier b5c6 stores the sum of marks
-
-	b5 <--- 1;
-	read(d5cb34567);
-	b5c6.maths <--- 0.00;
-	b5c6.physics <--- 0.00;
-	b5c6.chemistry <---0.00;
-	while(b5<=d5cb34567)
-		[d4] <--- call _readMarks with parameters [b5];
-		b5c6 <--- b5c6 + d4; 
-		% above displays the sum of records
-		b5 <--- b5 +1;
-	endwhile
-	d4 <--- b5c6 / d5cb34567;
-	write(d4.maths);
-	write(d4.physics);
-	write(d4.chemistry);
-
-    type int : b4;
-	type int : d5cb345671;
-	type int :  b3b4144 : global;
-	type real: c3;
-	b4 <--- 1;
-	read(d5cb345671);
-	read(b3b4144);
-
-	[c3] <--- call _computeFunctionValue with parameters [b4, d5cb345671, b3b4144];
-	write(c3);
+_main
+	[c4bd56]<--- call _sumN with parameters [b3];
 	return;
 end
