@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
+#include "stack.h"
 #include "parserDef.h"
 #include "hashtable.h"
 #include "lexerDef.h"
@@ -22,66 +24,6 @@ int *lineNo;
 
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
-Stack* initializeStack(Stack *stack);
-int isEmpty(Stack *stack);
-int isFull(Stack *stack);
-void push(Stack *stack, StackElement *str);
-StackElement* pop(Stack *stack);
-StackElement* peek(Stack *stack);
-void freeStack(Stack *stack);
-
-
-Stack* initializeStack(Stack *stack) {
-    stack = (Stack *) malloc(sizeof(Stack));
-    stack->top = -1;
-    return stack;
-}
-
-int isEmpty(Stack *stack) {
-    return (stack->top == -1);
-}
-
-int isFull(Stack *stack) {
-    return (stack->top == MAX_SIZE - 1);
-}
-
-void push(Stack *stack, StackElement *stackEle) {
-    if (isFull(stack)) {
-        printf("Stack overflow!\n");
-        return;
-    }
-
-    stack->top++;
-    stack->items[stack->top] = stackEle;
-}
-
-StackElement* pop(Stack *stack) {
-    if (isEmpty(stack)) {
-        printf("Stack underflow!\n");
-        return NULL;
-    }
-
-    return stack->items[stack->top--];
-}
-
-
-StackElement* peek(Stack *stack) {
-    if (isEmpty(stack)) {
-        printf("Stack is empty!\n");
-        return NULL;
-    }
-
-    return stack->items[stack->top];
-}
-
-StackElement *createNewStackElement (char lexeme[MAXTERM]) {
-    StackElement *stackElement = (StackElement *) malloc (sizeof(StackElement));
-    stackElement -> nodePointer = NULL;
-    strcpy(stackElement -> lexeme, lexeme);
-
-    return stackElement;
-}
-
 ParseTreeNode* createNewParseTreeNode(char *lex) {
     ParseTreeNode *treeElement = (ParseTreeNode *) malloc (sizeof(ParseTreeNode));
     treeElement -> children[0] = NULL;
@@ -89,12 +31,6 @@ ParseTreeNode* createNewParseTreeNode(char *lex) {
     treeElement -> numChildren = 0;
     treeElement -> outIndex = -1;
     return treeElement;
-}
-
-void freeStack(Stack *stack) {
-    while (!isEmpty(stack)) {
-        free(pop(stack));
-    }
 }
 
 void printParseTree(ParseTreeNode *root) {
@@ -210,6 +146,7 @@ void populateFollowFromElement(int ffIndex, char _element[MAXTERM]) {
 }
 
 // Function to initialize first and follow sets and NT lookup
+// Function to initialize first and follow sets and NT lookup
 void intialiseFFandLookup() {
     int entry = 0;
     char prev[MAXTERM] = "";
@@ -248,7 +185,6 @@ void intialiseFFandLookup() {
     noOfNonTerminals = entry;
 }
 
-
 NTLookupEntry getNTLookup(char *nonTerminal)
 {
     for (int i = 0; i < noOfNonTerminals; i++)
@@ -265,9 +201,6 @@ NTLookupEntry getNTLookup(char *nonTerminal)
     NTLookupEntry defaultEntry = {"", 0, 0}; // Or whatever default values you want to set
     return defaultEntry;
 }
-
-
-
 
 void findFirst(int ffind, int grammarInd) {
 
@@ -331,7 +264,6 @@ void findFirst(int ffind, int grammarInd) {
     firstFollow[ffind].visited=true;
     return;
 }
-
 
 void findFollow(int ffIndex){
     for(int i=0;i<parserLineNumber;i++){
@@ -430,7 +362,6 @@ void findFollow(int ffIndex){
     firstFollow[ffIndex].followCalc=true;
     return;
 }
-
 
 /*
 parser table population
@@ -566,9 +497,6 @@ void createParseTable()
     fillSyncInParseTable();
 }
 
-
-
-
 void parseInputSourceCode() {
     Stack *myStack;
     myStack = initializeStack(myStack);
@@ -586,13 +514,13 @@ void parseInputSourceCode() {
     push(myStack, startSymbolEle);
 
     int success = 1;
-    while (strcmp(currtoken,"EOF")!=0) {  
+    while (strcmp(currtoken, "EOF") != 0) {  
 
         //printing lexical error
 
         if(strcmp(currtoken,"ERROR")==0){
             success=0;
-            printf("Line No. %d Error:  %s  \n",lineNo[ind],value[ind]);
+            printf("%s  \n",value[ind-1]);
             strcpy(currtoken, token[ind ++]);
             continue;
         }
@@ -605,9 +533,9 @@ void parseInputSourceCode() {
             topElementIndex = getNTLookup(topElement -> lexeme).ffIndex;
         }
         
-        // if(strcmp(currtoken,"TK_WHILE")==0){
-        //     bool test=true;
-        // }
+        if(strcmp(topElement->lexeme,"TK_LIST")==0){
+            bool test=true;
+        }
 
         ParseTreeNode *currTreePointer = topElement -> nodePointer;
         
@@ -620,7 +548,7 @@ void parseInputSourceCode() {
             strcpy(currtoken, token[ind ++]);
             pop (myStack);
             free (topElement);
-        }else if (strcmp(currtoken,"EOF") && topElement -> lexeme[0] == '$') {
+        }else if (currtoken[0]=='$' && topElement -> lexeme[0] == '$') {
             break;
         } else if (topElementIndex == -1) {
             success=0;
@@ -677,7 +605,7 @@ void parseInputSourceCode() {
         
     } else {
         printf("Input Source Code is syntactically correct ........\n");
-        printf("The inorder traversal of the parse tree is as follow: \n");
+        printf("The inorder traversal of the parse tree is as follows: \n");
         // printf("%s\n", root -> lexeme);
         printParseTree(root);
     }
@@ -854,7 +782,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t5.txt", "r");
+    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t6.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -874,25 +802,28 @@ void runLexerAndParser() {
     filePointer = getStream(filePointer, twinBuffer);
     TokenInfo *tkinfo;
 
+    int capacity = MAX_SIZE;
+
     token = (char **) malloc (sizeof(char *) * MAX_SIZE);
     value = (char **) malloc (sizeof(char *) * MAX_SIZE);
     lineNo = (int *) malloc (sizeof(int) * MAX_SIZE);
 
     int ind=0;
     while(filePointer!=NULL) {
+        
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
-            // printf("Line no. %d  Lexical Error\n",lineNumber+1);
+            // printf("%s\n",tkinfo->value);
             lineNo[ind] = lexerLineNumber+1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind], "ERROR");
             value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(value[ind],tkinfo->value);
-            continue;
+            
         }
         else if(strcmp(tkinfo->value,"$")==0){
-            // printf("%s",tkinfo->value);
+            // printf("%s \n",tkinfo->value);
             lineNo[ind] = lexerLineNumber +1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind],tkinfo->tkId);
@@ -902,14 +833,14 @@ void runLexerAndParser() {
         }
         else
         {   
-            if(strlen(tkinfo->value) < 20)
+            if( (strlen(tkinfo->value) <= 20) | (strcmp(tkinfo->tkId,"TK_FUNID")==0 & strlen(tkinfo->value) <= 30))
             {
                 if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                     insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
                 
                 }    
             
-                // printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                // printf("Line %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
                 lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(token[ind], getValue(myMap,tkinfo->value));
@@ -923,20 +854,31 @@ void runLexerAndParser() {
                 strcpy(token[ind], "ERROR");
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(value[ind],"Identifier is too long");
+                // printf("Line %d Error:  Identifier is too long\n", lexerLineNumber+1);
             }
         }
         ind++;
+        if(ind==capacity){
+            capacity = capacity * 2;
+            token = (char **) realloc(token, sizeof(char *) * capacity);
+            value = (char **) realloc(value, sizeof(char *) * capacity);
+            lineNo = (int *) realloc(lineNo, sizeof(int) * capacity);
+        }
     }
 
     parseInputSourceCode();
-
-    printf("Both lexical and syntax analysis modules implemented\n");
-
+    
+    free(token);
+    free(value);
+    free(lineNo);
     destroyHashMap(myMap);
     fclose(filePointer);
     return;
 }
 
+
+
 int main() {
     runLexerAndParser();
+    
 }

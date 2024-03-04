@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #define MAXSIZE 100
+#define maxVarSize 100
 
 extern int lexerLineNumber;
 

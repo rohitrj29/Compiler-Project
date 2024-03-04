@@ -1,5 +1,3 @@
-//#include "structures.h"
-//#include "lexer.h"
 #include "hashtable.h"
 #include "lexer.h"
 #include "lexerDef.h"
@@ -8,8 +6,6 @@
 #include<stdlib.h>
 #include<string.h>
 #include<math.h>
-
-#define maxVarSize 100
 
 int lexerLineNumber = 0;
 int lenflag = 0;
@@ -128,7 +124,8 @@ void generateErrorMessage(char **errorMessage, int lexerLineNumber, char *temp) 
     strcat(*errorMessage, temp);
     strcat(*errorMessage, ">");
 
-    printf("%s\n", *errorMessage);
+    // printf("%s\n", *errorMessage);
+    return ;
 }
 
 TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
@@ -327,7 +324,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 {
                     //error
                     twinBuffer -> lexBegin = twinBuffer -> forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     
@@ -369,7 +366,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             else {
                 //error
                 twinBuffer->lexBegin=twinBuffer->forward;
-
+                temp[tempIndex]='\0';
                 char *errorMessage;
                 generateErrorMessage(&errorMessage, lexerLineNumber, temp);
 
@@ -389,7 +386,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
             else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -418,7 +415,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -489,7 +486,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -614,7 +611,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 } else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-                    
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -638,7 +635,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -653,7 +650,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage, NULL,lexerLineNumber);
@@ -672,7 +669,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo,errorMessage,NULL,lexerLineNumber);
@@ -691,7 +688,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
@@ -709,7 +706,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 }else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
@@ -772,7 +769,7 @@ TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer) {
                 } else {
                     //error
                     twinBuffer->lexBegin=twinBuffer->forward;
-
+                    temp[tempIndex]='\0';
                     char *errorMessage;
                     generateErrorMessage(&errorMessage, lexerLineNumber, temp);
                     return returnToken(tokenInfo, errorMessage,NULL,lexerLineNumber);
@@ -845,6 +842,7 @@ void runLexerOnly() {
         tkinfo=getNextToken(twinBuffer, filePointer);
         if(tkinfo->tkId==NULL)
         {
+            printf(tkinfo->value);
             // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
             continue;
         }
@@ -854,7 +852,7 @@ void runLexerOnly() {
         }
         else
         {   
-            if(strlen(tkinfo->value) <= 20)
+            if((strlen(tkinfo->value) <= 20) | (strcmp(tkinfo->tkId,"TK_FUNID")==0 & strlen(tkinfo->value) <= 30))
             {
                 if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                     insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);

@@ -93,17 +93,6 @@ typedef struct ParseTreeNode {
     int outIndex;
 } ParseTreeNode;
 
-typedef struct {
-    char lexeme[MAXTERM];
-    ParseTreeNode *nodePointer;
-} StackElement;
-
-typedef struct {
-    StackElement *items[MAX_SIZE];
-    int top;
-} Stack;
-
-
 // Define a structure for a key-value pair
 typedef struct KeyValuePair {
     char *key;
@@ -135,19 +124,8 @@ int fromZeroToWhere(char currentCharacter);
 TokenInfo* returnToken (TokenInfo *tokenInfo, char *value, char *tokenID, int lineNumber);
 TokenInfo* getNextToken(TwinBuffer* twinBuffer, FILE *filePointer);
 void runLexerOnly();
-
-Stack* initializeStack(Stack *stack);
-int isEmpty(Stack *stack);
-int isFull(Stack *stack);
-void push(Stack *stack, StackElement *str);
-StackElement* pop(Stack *stack);
-StackElement* peek(Stack *stack);
-void freeStack(Stack *stack);
-
-StackElement *createNewStackElement (char lexeme[MAXTERM]);
 ParseTreeNode* createNewParseTreeNode(char *lex);
 
-void freeStack(Stack *stack);
 void printInOrder(ParseTreeNode *root);
 bool present(char element[MAXTERM], char array[MAXELE][MAXTERM], int noOfEleInArray);
 void populateTerminals();
@@ -1190,66 +1168,6 @@ int *lineNo;
 
 int noOfNonTerminals = 0; // Added for storing the total number of non-terminals
 
-Stack* initializeStack(Stack *stack);
-int isEmpty(Stack *stack);
-int isFull(Stack *stack);
-void push(Stack *stack, StackElement *str);
-StackElement* pop(Stack *stack);
-StackElement* peek(Stack *stack);
-void freeStack(Stack *stack);
-
-
-Stack* initializeStack(Stack *stack) {
-    stack = (Stack *) malloc(sizeof(Stack));
-    stack->top = -1;
-    return stack;
-}
-
-int isEmpty(Stack *stack) {
-    return (stack->top == -1);
-}
-
-int isFull(Stack *stack) {
-    return (stack->top == MAX_SIZE - 1);
-}
-
-void push(Stack *stack, StackElement *stackEle) {
-    if (isFull(stack)) {
-        printf("Stack overflow!\n");
-        return;
-    }
-
-    stack->top++;
-    stack->items[stack->top] = stackEle;
-}
-
-StackElement* pop(Stack *stack) {
-    if (isEmpty(stack)) {
-        printf("Stack underflow!\n");
-        return NULL;
-    }
-
-    return stack->items[stack->top--];
-}
-
-
-StackElement* peek(Stack *stack) {
-    if (isEmpty(stack)) {
-        printf("Stack is empty!\n");
-        return NULL;
-    }
-
-    return stack->items[stack->top];
-}
-
-StackElement *createNewStackElement (char lexeme[MAXTERM]) {
-    StackElement *stackElement = (StackElement *) malloc (sizeof(StackElement));
-    stackElement -> nodePointer = NULL;
-    strcpy(stackElement -> lexeme, lexeme);
-
-    return stackElement;
-}
-
 ParseTreeNode* createNewParseTreeNode(char *lex) {
     ParseTreeNode *treeElement = (ParseTreeNode *) malloc (sizeof(ParseTreeNode));
     treeElement -> children[0] = NULL;
@@ -1257,12 +1175,6 @@ ParseTreeNode* createNewParseTreeNode(char *lex) {
     treeElement -> numChildren = 0;
     treeElement -> outIndex = -1;
     return treeElement;
-}
-
-void freeStack(Stack *stack) {
-    while (!isEmpty(stack)) {
-        free(pop(stack));
-    }
 }
 
 void printParseTree(ParseTreeNode *root) {
@@ -2022,7 +1934,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t6.txt", "r");
+    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t6.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
