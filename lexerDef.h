@@ -1,7 +1,7 @@
 #ifndef LEXERDEF_H
 #define LEXERDEF_H
 
-#define bufferSize 4
+#define bufferSize 50
 #define SIZE 10000
 
 typedef struct

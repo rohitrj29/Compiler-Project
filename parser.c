@@ -873,7 +873,7 @@ void runLexerAndParser()
 {
     // Initialize File Pointer
     FILE *filePointer;
-    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\testcase3.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\testcase1.txt", "r");
 
     if (filePointer == NULL)
     {
