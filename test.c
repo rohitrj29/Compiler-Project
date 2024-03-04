@@ -10,7 +10,7 @@
 #define maxVarSize 100
 
 
-#define MAX_SIZE 250
+#define MAX_SIZE 1000
 #define MAXELE 20
 #define LINESIZE 100000
 #define MAXTERM 50
@@ -1141,7 +1141,7 @@ void runLexerOnly() {
         }
         else
         {   
-            if(strlen(tkinfo->value) <= 20)
+            if(strlen(tkinfo->value) <= 30)
             {
                 if(strcmp(getValue(myMap,tkinfo->value),"KEY NOT FOUND" )==0){
                     insertIntoHash(myMap,tkinfo->value,tkinfo->tkId);
@@ -1770,9 +1770,9 @@ void parseInputSourceCode() {
             topElementIndex = getNTLookup(topElement -> lexeme).ffIndex;
         }
         
-        // if(strcmp(currtoken,"TK_WHILE")==0){
-        //     bool test=true;
-        // }
+        if(strcmp(topElement->lexeme,"TK_LIST")==0){
+            bool test=true;
+        }
 
         ParseTreeNode *currTreePointer = topElement -> nodePointer;
         
@@ -1842,7 +1842,7 @@ void parseInputSourceCode() {
         
     } else {
         printf("Input Source Code is syntactically correct ........\n");
-        printf("The inorder traversal of the parse tree is as follow: \n");
+        printf("The inorder traversal of the parse tree is as follows: \n");
         // printf("%s\n", root -> lexeme);
         printParseTree(root);
     }
@@ -2019,7 +2019,7 @@ void startParsing()
 void runLexerAndParser() {
     // Initialize File Pointer
     FILE* filePointer;
-    filePointer = fopen("C:\\Users\\91934\\Desktop\\Compiler-Project\\t5.txt", "r");
+    filePointer = fopen("C:\\Users\\91620\\Desktop\\CoCo\\Compiler-Project\\t3.txt", "r");
 
     if (filePointer == NULL) {
         printf("Failed to open file!\n");
@@ -2057,7 +2057,7 @@ void runLexerAndParser() {
             continue;
         }
         else if(strcmp(tkinfo->value,"$")==0){
-            printf("%s",tkinfo->value);
+            // printf("%s",tkinfo->value);
             lineNo[ind] = lexerLineNumber +1;
             token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
             strcpy(token[ind],tkinfo->tkId);
@@ -2074,7 +2074,7 @@ void runLexerAndParser() {
                 
                 }    
             
-                printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
+                // printf("Line No. %d Lexeme %s  Token %s \n", lexerLineNumber+1,tkinfo->value, getValue(myMap,tkinfo->value));
                 lineNo[ind]=lexerLineNumber+1;
                 token[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(token[ind], getValue(myMap,tkinfo->value));
@@ -2088,14 +2088,14 @@ void runLexerAndParser() {
                 strcpy(token[ind], "ERROR");
                 value[ind] = (char *) malloc (sizeof(char) * MAXTERM);
                 strcpy(value[ind],"Identifier is too long");
-                printf("Line No. %d Error:  Identifier is too long\n", lexerLineNumber+1);
+                // printf("Line No. %d Error:  Identifier is too long\n", lexerLineNumber+1);
             }
         }
         ind++;
     }
 
     parseInputSourceCode();
-
+    //printtoken();
     //printf("Both lexical and syntax analysis modules implemented\n");
 
     destroyHashMap(myMap);
@@ -2103,6 +2103,12 @@ void runLexerAndParser() {
     return;
 }
 
+void printtoken()
+{
+
+}
+
 int main() {
     runLexerAndParser();
+    printtoken();
 }
