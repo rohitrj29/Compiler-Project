@@ -1,5 +1,4 @@
 #include "stack.h"
-#include "parseTreeStack.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
