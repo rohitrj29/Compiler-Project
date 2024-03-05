@@ -34,7 +34,7 @@ ParseTreeNode *createNewParseTreeNode(char *lex)
 {
     ParseTreeNode *treeElement = (ParseTreeNode *) malloc(sizeof(ParseTreeNode));
     treeElement->children[0] = NULL;
-    treeElement -> parentIndex = -1;
+    strcpy(treeElement -> parent,"-----");
     treeElement -> nodeIndex = nodeIndexTracker ++;
     strcpy(treeElement->lexeme, lex);
     treeElement->numChildren = 0;
@@ -59,24 +59,28 @@ void printInorder(FILE *fp, ParseTreeNode *root)
     if (root->outIndex >= 0)
     {
         // Print information for the current node
-        fprintf(fp, "Terminal => Token: %s, Node Index: %d, Line No: %d, Lexeme: %s, Parent Index: %d, Is Leaf: %s\n",
-        root->lexeme,
-        root->nodeIndex,
+        // "Lexeme", "LINE NO", "TOKEN NAME", "VALUE IF NUM", "PARENT SYMBOL", "IS LEAF NODE","NODE SYMBOL"
+        fprintf(fp,"%-30s %-15d %-22s %-22s %-22s %-15s %-22s\n",
+
+        value[root->outIndex],
         lineNo[root->outIndex],
-        value[root->outIndex], // Replace with the actual value if number logic
-        root -> parentIndex,
-        (root->numChildren == 0) ? "Yes" : "No"); 
+        root->lexeme, // Replace with the actual value if number logic
+        (strcmp(root->lexeme,"TK_NUM")==0||strcmp(root->lexeme,"TK_RNUM")==0)?value[root->outIndex]:"-----",
+        root -> parent,
+        (root->numChildren == 0) ? "Yes" : "No",
+        "-----"); 
     }
     else
     {
         // Print information for the current node
-        fprintf(fp, "Non-Terminal => Token: %s, Node Index: %d, Line No: %d, Lexeme: %s, Parent Index: %d, Is Leaf: %s\n",
-        root->lexeme,
-        root->nodeIndex,
-        lineNo[root->outIndex],
+        fprintf(fp, "%-30s %-15s %-22s %-22s %-22s %-14s %-22s\n",
+        "-----",
+        "-----",
+        "-----",
         "-----", // Replace with the actual value if number logic
-        root -> parentIndex,
-        (root->numChildren == 0) ? "Yes" : "No"); 
+        root -> parent,
+        (root->numChildren == 0) ? "Yes" : "No",
+        root->lexeme); 
     }
 
     // value , line no, token
@@ -87,7 +91,8 @@ void printInorder(FILE *fp, ParseTreeNode *root)
 void printParseTree(ParseTreeNode *root, char *fileName) {
     FILE *fp;
     fp = fopen(fileName, "w");
-
+    fprintf(fp,"%-30s %-15s %-22s %-22s %-22s %-15s %-22s\n", "Lexeme", "LINE NO", "TOKEN NAME", "VALUE IF NUM", "PARENT SYMBOL", "IS LEAF NODE","NODE SYMBOL");
+    fprintf(fp,"%-30s %-15s %-22s %-22s %-22s %-15s %-22s\n", "------", "-------", "-----------", "------------", "-------------", "-------------","------------");
     printInorder(fp, root);
 
     fclose(fp);
@@ -686,7 +691,8 @@ void parseInputSourceCode(char *parseTreeFileName) {
         {
             //if the top of the stack is a non terminal 
             GrammarRule rule = grammarRule[tableValue];
-            int par=topElement->nodePointer->nodeIndex;
+            char par[MAXTERM];
+            strcpy(par,topElement->nodePointer->lexeme);
             pop(myStack);
             free(topElement);
             
@@ -707,7 +713,7 @@ void parseInputSourceCode(char *parseTreeFileName) {
 
                 int originalChildren = currTreePointer -> numChildren;
                 currTreePointer -> children[originalChildren] = treeNode;
-                treeNode -> parentIndex = par;
+                strcpy(treeNode -> parent ,par);
                 currTreePointer -> numChildren ++;
 
                 push(myStack, newElement);

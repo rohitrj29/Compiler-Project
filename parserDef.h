@@ -49,7 +49,7 @@ typedef struct ParseTreeNode
     int numChildren;
     int outIndex;
     int nodeIndex;
-    int parentIndex;
+    char parent[MAXTERM];
 } ParseTreeNode;
 
 #endif
