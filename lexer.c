@@ -223,7 +223,7 @@ TokenInfo *getNextToken(TwinBuffer *twinBuffer, FILE *filePointer)
 
     char *currentBuffer;
     int state = 0;
-    char *temp = malloc(sizeof(maxVarSize));
+    char *temp = (char* )malloc(sizeof(char)*maxVarSize);
     int tempIndex = 0;
 
     TokenInfo *tokenInfo = (TokenInfo *)malloc(sizeof(TokenInfo));
@@ -1031,13 +1031,13 @@ void runLexerOnly(char *fileName)
         tkinfo = getNextToken(twinBuffer, filePointer);
         if (tkinfo->tkId == NULL)
         {
-            printf("%s", tkinfo->value);
+            printf("%s \n", tkinfo->value);
             // printf("Line no. %d  Lexical Error\n",lexerLineNumber+1);
             continue;
         }
         else if (strcmp(tkinfo->value, "$") == 0)
         {
-            printf("%s", tkinfo->value);
+            printf("%s \n", tkinfo->value);
             break;
         }
         else
@@ -1060,6 +1060,7 @@ void runLexerOnly(char *fileName)
 
     printf("\n\nOnly Lexical analyzer module developed!\n\n");
     lexerLineNumber=0;
+    free(tkinfo);
     destroyHashMap(myMap);
     fclose(filePointer);
     return;

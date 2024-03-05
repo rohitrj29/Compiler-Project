@@ -1,0 +1,153 @@
+
+
+
+_sumN  input parameter list [int d5cc34]  
+output parameter list[real d3];
+type int : b5b567;
+b5b567 <--- 1;
+d3 <--- 0.00;
+while ( b5b567 <= d5cc34)
+read( c3bd);
+d3 <--- d3 + c3bd;
+b5b567 <--- b5b567 + 1;
+endwhile
+return [d3];
+end
+
+
+_readMarks input parameter list[int b7]
+output parameter list [ record #marks b3c45];
+read(b3c45.maths);
+read(b3c45.physics);
+read(b3c45.chemistry);
+return [b3c45];
+end
+
+
+
+
+
+
+
+_computeFunctionValue input parameter list[int c3, int c4, int c5]
+output parameter list [real c6];
+type real : d4cbcd5677;
+type real : c4bbb;
+c6 <--- 5000.79;
+d4cbcd5677<--- ((c3 + 2*c4)-(c5-5))/ 4;
+c4bbb <--- ((d4cbcd5677- 2.35)*(2345-234*8))+5*c3;
+if((~(c4bbb == 0)) &&& (c4bbb > 78.56))
+then
+c6<--- d4cbcd5677/c4bbb;
+else
+write(c4bbb);
+endif
+
+return [c6];
+end
+
+
+
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+record #two
+type #point: beginpoint;
+type #point: endpoint;
+endrecord
+
+
+type record #two : b5b567;
+type record #one : b3;
+type #point: d5;
+b5b567 <--- c6*2;
+b3 <--- c6-c3;
+while ( b5b567 <= d5cc34)
+read(c3bd);
+d3 <--- d3 + c3bd;
+b5b567 <--- b5b567 + 1;
+endwhile
+return [d3];
+end
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+record #two
+type #point: beginpoint;
+type #point: endpoint;
+endrecord
+
+
+type record #two : b5b567;
+type record #one : b3;
+type #point: d5;
+b5b567 <--- c6*2;
+b3 <--- c6-c3;
+while ( b5b567 <= d5cc34)
+read(c3bd);
+d3 <--- d3 + c3bd;
+b5b567 <--- b5b567 + 1;
+endwhile
+return [d3];
+end
+
+_unionfunction  input parameter list [record #two d5cc34, #point b5c6]  
+output parameter list[real d3];
+
+record #two
+type #point: beginpoint;
+type #point: endpoint;
+endrecord
+
+
+type record #two : b5b567;
+type record #one : b3;
+type #point: d5;
+b5b567 <--- c6*2;
+b3 <--- c6-c3;
+while ( b5b567 <= d5cc34)
+read(c3bd);
+d3 <--- d3 + c3bd;
+b5b567 <--- b5b567 + 1;
+endwhile
+return [d3];
+end
+
+
+_main 
+record #one
+type real:x;
+type real:y;
+endrecord	
+definetype record #one as #point
+definetype record #two as #line
+union #four
+type #line : ln; 
+type #point: pt; 
+type #traingle:tr;
+endunion
+definetype record #three as #triangle  
+record #three 
+type #line: base;
+type #line: height;
+endrecord
+definetype union #four as #shape
+record #variantrecord
+type int: tag;
+type #shape: s;
+endrecord
+
+type record #variantrecord : d4;
+type int : b5;
+type int : d5cb34567;
+type record #variantrecord: b5c6;
+b5c6 <--- b5c6.tag + d4.s.ln.beginpoint.x - b5c6.s.tr.base.beginpoint.y; 
+b5 <--- b5 +1;
+d4 <--- b5c6 / d5cb34567;
+write(d4);
+write(d4.s.ln.beginpoint.x );
+write(b5c6.tag );
+return;
+end
