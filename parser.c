@@ -60,7 +60,7 @@ void printInorder(FILE *fp, ParseTreeNode *root)
     {
         // Print information for the current node
         // "Lexeme", "LINE NO", "TOKEN NAME", "VALUE IF NUM", "PARENT SYMBOL", "IS LEAF NODE","NODE SYMBOL"
-        fprintf(fp,"%-30s %-15d %-22s %-22s %-22s %-15s %-22s\n",
+        fprintf(fp,"%-35s %-15d %-22s %-22s %-22s %-15s %-22s\n",
 
         value[root->outIndex],
         lineNo[root->outIndex],
@@ -73,7 +73,7 @@ void printInorder(FILE *fp, ParseTreeNode *root)
     else
     {
         // Print information for the current node
-        fprintf(fp, "%-30s %-15s %-22s %-22s %-22s %-14s %-22s\n",
+        fprintf(fp, "%-35s %-15s %-22s %-22s %-22s %-14s %-22s\n",
         "-----",
         "-----",
         "-----",
@@ -91,8 +91,8 @@ void printInorder(FILE *fp, ParseTreeNode *root)
 void printParseTree(ParseTreeNode *root, char *fileName) {
     FILE *fp;
     fp = fopen(fileName, "w");
-    fprintf(fp,"%-30s %-15s %-22s %-22s %-22s %-15s %-22s\n", "Lexeme", "LINE NO", "TOKEN NAME", "VALUE IF NUM", "PARENT SYMBOL", "IS LEAF NODE","NODE SYMBOL");
-    fprintf(fp,"%-30s %-15s %-22s %-22s %-22s %-15s %-22s\n", "------", "-------", "-----------", "------------", "-------------", "-------------","------------");
+    fprintf(fp,"%-35s %-15s %-22s %-22s %-22s %-15s %-22s\n", "Lexeme", "LINE NO", "TOKEN NAME", "VALUE IF NUM", "PARENT SYMBOL", "IS LEAF NODE","NODE SYMBOL");
+    fprintf(fp,"%-35s %-15s %-22s %-22s %-22s %-15s %-22s\n", "------", "-------", "-----------", "------------", "-------------", "-------------","------------");
     printInorder(fp, root);
 
     fclose(fp);
@@ -731,8 +731,13 @@ void parseInputSourceCode(char *parseTreeFileName) {
 
     //if error dont print the parse tree
     if (!success)
-    {
-        return;
+    {   
+        printf("Input Source Code is syntactically incorrect ........\n");
+
+        printParseTree(root, parseTreeFileName);
+        
+        printf("Parse Tree was constructed and the inorder traversal of the parse tree is saved in the file name provided! \n\n");
+        // return;
     } else {
         //if no error print the parse tree
         printf("Both lexical and syntax analysis modules implemented!\n"); 
